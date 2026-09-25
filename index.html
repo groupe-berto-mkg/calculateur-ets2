@@ -6,35 +6,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap">
 <link rel="icon" href="assets/logo-flexy-green.png">
 <style>
-/* Charte : Rouge Berto #EA0021 = le coût carbone (le problème) · Vert Flexy Green #009641 = les solutions.
-   Space Grotesk (charte Groupe Berto) pour le texte, Barlow Condensed en capitales pour les titres (style Flexy Green). */
-:root{
-  --bg:#F5F7F5;--surface:#FFFFFF;--surface-2:#EDF2EE;--ink:#141A16;--muted:#5C6760;--line:#DDE4DF;
-  --navy:#0B4F2C;--navy-soft:#E3F1E7;--emerald:#009641;--emerald-ink:#007A35;--emerald-soft:#E2F3E8;
-  --slate:#6B7570;--slate-light:#B9C3BD;--warn:#B45309;--warn-soft:#FDF1D8;--crit:#EA0021;--crit-soft:#FDE7EA;--red-muted:#F4A7B1;
-  --lime:#4D7C0F;--lime-soft:#ECF7D6;--katalii:#023C4C;--katalii-soft:#E0ECEF;--forest:#0B3D22;
-  --shadow:0 1px 2px rgba(11,61,34,.06),0 8px 24px -12px rgba(11,61,34,.16);
+/* Charte : page claire et sobre, une seule police (Space Grotesk, charte Groupe Berto).
+   La couleur est réservée au sens : rouge Berto = coût carbone, vert Flexy Green = solutions, bleu Katalii = optimisation.
+   Thème clair unique, choisi délibérément : pas de variante sombre. */
+:root{color-scheme:light;
+  --bg:#FFFFFF;--surface:#FFFFFF;--surface-2:#F5F7F6;--ink:#1B201D;--muted:#69726D;--line:#E7EBE8;
+  --navy:#1B201D;--navy-soft:#F5F7F6;--emerald:#009641;--emerald-ink:#00813A;--emerald-soft:#F5F7F6;
+  --slate:#8C958F;--slate-light:#D3D9D5;--warn:#A15C07;--warn-soft:#FBF4E6;--crit:#E2001F;--crit-soft:#FDF1F2;--red-muted:#F2B6BE;
+  --lime:#4D7C0F;--lime-soft:#F2F7E9;--katalii:#023C4C;--katalii-soft:#F5F7F6;--shadow:none;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
-  --bg:#0A110D;--surface:#111A15;--surface-2:#17231C;--ink:#E7EEE9;--muted:#98A69D;--line:#25342B;
-  --navy:#3DD17B;--navy-soft:#12301F;--emerald:#2BC06A;--emerald-ink:#3DD17B;--emerald-soft:#0F2B1B;
-  --slate:#8A968F;--slate-light:#3C4A42;--warn:#FBBF24;--warn-soft:#352709;--crit:#FF4D63;--crit-soft:#3A1219;--red-muted:#7A2632;
-  --lime:#A3E635;--lime-soft:#1E2A0C;--katalii:#6FC0D4;--katalii-soft:#0E2A31;--forest:#0B2A18;--shadow:0 1px 2px rgba(0,0,0,.4);}}
-:root[data-theme="dark"]{color-scheme:dark;
-  --bg:#0A110D;--surface:#111A15;--surface-2:#17231C;--ink:#E7EEE9;--muted:#98A69D;--line:#25342B;
-  --navy:#3DD17B;--navy-soft:#12301F;--emerald:#2BC06A;--emerald-ink:#3DD17B;--emerald-soft:#0F2B1B;
-  --slate:#8A968F;--slate-light:#3C4A42;--warn:#FBBF24;--warn-soft:#352709;--crit:#FF4D63;--crit-soft:#3A1219;--red-muted:#7A2632;
-  --lime:#A3E635;--lime-soft:#1E2A0C;--katalii:#6FC0D4;--katalii-soft:#0E2A31;--forest:#0B2A18;--shadow:0 1px 2px rgba(0,0,0,.4);}
 html,body{background:var(--bg);color:var(--ink)}
-body{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;margin:0}
-.font-display{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+body{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;margin:0}
+.font-display{font-family:"Space Grotesk",system-ui,sans-serif;letter-spacing:-.02em}
 .num{font-family:"Space Grotesk",system-ui,sans-serif;font-variant-numeric:tabular-nums}
 h1,h2,h3{text-wrap:balance}
-.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
-.spaced{letter-spacing:.35em;text-transform:uppercase;font-size:12px;font-weight:500}
+.eyebrow{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;color:var(--muted)}
 input[type=range]{accent-color:var(--emerald);width:100%}
 input[type=checkbox]{accent-color:var(--emerald);width:16px;height:16px}
 :focus-visible{outline:2px solid var(--emerald);outline-offset:2px;border-radius:4px}
@@ -52,7 +41,7 @@ table{border-collapse:collapse}
 tailwind.config={corePlugins:{preflight:true},theme:{extend:{colors:{
   bg:'var(--bg)',surface:'var(--surface)',surface2:'var(--surface-2)',ink:'var(--ink)',muted:'var(--muted)',line:'var(--line)',
   navy:'var(--navy)',navysoft:'var(--navy-soft)',emerald:'var(--emerald)',emink:'var(--emerald-ink)',emsoft:'var(--emerald-soft)',
-  katalii:'var(--katalii)',katsoft:'var(--katalii-soft)',forest:'var(--forest)',slate:'var(--slate)',warn:'var(--warn)',warnsoft:'var(--warn-soft)',crit:'var(--crit)',critsoft:'var(--crit-soft)'}}}};
+  katalii:'var(--katalii)',katsoft:'var(--katalii-soft)',slate:'var(--slate)',warn:'var(--warn)',warnsoft:'var(--warn-soft)',crit:'var(--crit)',critsoft:'var(--crit-soft)'}}}};
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
@@ -334,7 +323,7 @@ function Slider({ id, label, value, onChange, min = 0, max = 100, step = 1, disp
 const Panel = ({ title, eyebrow, children, right, className = '' }) => (
   <section className={`rounded-xl border border-line bg-surface p-4 sm:p-5 flex flex-col gap-4 ${className}`}>
     {(title || eyebrow) && <header className="flex flex-wrap items-end justify-between gap-2">
-      <div>{eyebrow && <div className="eyebrow">{eyebrow}</div>}{title && <h3 className="font-display text-[20px] font-semibold leading-tight">{title}</h3>}</div>{right}
+      <div>{eyebrow && <div className="eyebrow">{eyebrow}</div>}{title && <h3 className="font-display text-[17px] font-semibold leading-snug">{title}</h3>}</div>{right}
     </header>}
     {children}
   </section>
@@ -351,7 +340,7 @@ function ClassBadge({ pctClean, size = 'lg' }) {
     <motion.div key={c.id} initial={{ scale: .85, opacity: .4 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 320, damping: 20 }}
       className="inline-flex items-center gap-3" title={c.text}>
       <span className="font-display font-extrabold grid place-items-center rounded-lg"
-        style={{ color: t.fg, background: t.bg, width: big ? 56 : 36, height: big ? 56 : 36, fontSize: big ? 26 : 16, border: `1.5px solid ${t.fg}` }}>{c.id}</span>
+        style={{ color: t.fg, background: t.bg, width: big ? 56 : 36, height: big ? 56 : 36, fontSize: big ? 26 : 16 }}>{c.id}</span>
       {big && <span className="flex flex-col leading-tight"><span className="font-semibold" style={{ color: t.fg }}>{c.text}</span>
         <span className="text-[12px] text-muted">{pct(pctClean)} d'énergies alternatives</span></span>}
     </motion.div>
@@ -636,7 +625,7 @@ function StepLevers({ st, set, r }) {
               <RC.YAxis {...axis} tickLine={false} axisLine={false} width={56} tickFormatter={v => keur(v, 0)} />
               <RC.Tooltip content={<ChartTip />} cursor={{ fill: t.line, opacity: .35 }} />
               <RC.Legend wrapperStyle={{ fontSize: 12 }} />
-              <RC.Bar dataKey="loyer" name="Loyer LLD" stackId="t" fill={t.navy} />
+              <RC.Bar dataKey="loyer" name="Loyer LLD" stackId="t" fill={t.muted} />
               <RC.Bar dataKey="energy" name="Énergie hors ETS 2" stackId="t" fill={t.slate} />
               <RC.Bar dataKey="maint" name="Maintenance" stackId="t" fill={t.slateLight} />
               <RC.Bar dataKey="ets" name="Taxe ETS 2" stackId="t" fill={t.crit} radius={[4, 4, 0, 0]} />
@@ -779,7 +768,7 @@ function Report({ st, r, onClose }) {
         </div>
         <p className="text-[12px] text-muted">Méthode : facteurs d'émission par défaut du règlement MRR (UE) 2018/2066, périmètre tank-to-wheel retenu par l'ETS 2, biocarburants certifiés RED II / III à facteur nul. Ce rapport sert de base à un reporting <Term k="csrd">CSRD</Term> (ESRS E1). Un bilan <Term k="iso">ISO 14083</Term> demande en plus les émissions amont (WTW). Estimation non vérifiée par un tiers.</p>
         <div className="no-print flex flex-wrap items-center gap-2">
-          <button onClick={copy} className="inline-flex items-center gap-2 rounded-md bg-navy px-3.5 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="Copy" size={15} />Copier le rapport</button>
+          <button onClick={copy} className="inline-flex items-center gap-2 rounded-md bg-emink px-3.5 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="Copy" size={15} />Copier le rapport</button>
           {standalone && <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-2 text-[13px] font-semibold"><Icon name="Printer" size={15} />Imprimer / PDF</button>}
           {standalone && <button onClick={download} className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-2 text-[13px] font-semibold"><Icon name="Download" size={15} />Télécharger (.html)</button>}
           {copied && <span className="text-[12px] text-muted" role="status">{copied}</span>}
@@ -827,7 +816,7 @@ function Rail({ st, r, openReport }) {
           <div className="num text-[18px] font-semibold text-emink"><Tween value={r.savings.total} fmt={v => `${v >= 0 ? '−' : '+'}${eur(Math.abs(v))}`} /> <span className="text-[12px] font-normal">de TCO /an</span></div>
           <div className="text-[12px] text-emink">Classe {c.id} → {classOf(r.cleanOpt).id}</div>
         </div>
-        <button onClick={openReport} className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
+        <button onClick={openReport} className="inline-flex items-center justify-center gap-2 rounded-md bg-emink px-3 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
           <Icon name="FileText" size={15} />Télécharger le rapport synthétique</button>
       </div>
       <p className="text-[12px] text-muted px-1">Données d'exemple : PME de 10 porteurs et 5 tracteurs. Remplacez-les par votre flotte à l'étape 1.</p>
@@ -892,7 +881,7 @@ function LightCalc({ st, set, r, unlocked, onDetailed }) {
             <span><b className="text-katalii">Katalii</b> : l'optimisation des tournées et l'éco-conduite réduisent la facture carburant et la taxe
               d'environ <b className="num">{eur(katGain)}</b> par an.</span></div>
         </div>
-        <button onClick={onDetailed} className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald px-3 py-3 text-[14px] font-semibold text-white">
+        <button onClick={onDetailed} className="inline-flex items-center justify-center gap-2 rounded-md bg-emink px-3 py-3 text-[14px] font-semibold text-white">
           <Icon name={unlocked ? 'ArrowRight' : 'Lock'} size={15} />Chiffrer mon plan d'action</button>
         <p className="text-[12px] text-muted -mt-2 text-center">Version détaillée : impact sur la marge, TCO par énergie, rapport.</p>
       </aside>
@@ -968,7 +957,7 @@ function LeadGate({ onUnlock, onBack }) {
           <input id="g-consent" type="checkbox" className="mt-0.5" checked={f.consent} onChange={up('consent')} />
           <span>J'accepte d'être recontacté par Groupe Berto au sujet de ma simulation.{err.consent && <span className="block text-[12px] text-crit">{err.consent}</span>}</span>
         </label>
-        <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-4 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
+        <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-md bg-emink px-4 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
           <Icon name="Unlock" size={15} />Accéder à la version détaillée</button>
         <p className="text-[12px] text-muted">Version de démonstration : vos coordonnées ne sont ni transmises ni conservées.</p>
       </form>
@@ -991,22 +980,27 @@ function App() {
   const unlock = () => { try { localStorage.setItem(UNLOCK_KEY, '1'); } catch {} setUnlocked(true); setMode('full'); scrollTo({ top: 0 }); };
   return (
     <div className="mx-auto max-w-[1240px] px-4 sm:px-6 py-6 flex flex-col gap-5">
-      <header className="flex flex-col gap-4">
+      <header className="flex flex-col gap-7">
         <div className="flex items-center justify-between gap-4">
-          <span className="inline-flex rounded-md bg-white px-2.5 py-1.5 border border-line"><img src="assets/logo-berto.png" alt="Groupe Berto" className="h-7 w-auto" /></span>
-          <button onClick={() => set(s => ({ ...defaultState(), step: s.step }))} className="inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink">
-            <Icon name="RotateCcw" size={14} />Revenir à l'exemple</button>
+          <img src="assets/logo-berto.png" alt="Groupe Berto" className="h-8 w-auto" />
+          <span className="flex items-center gap-2 text-[12px] text-muted">Une offre<img src="assets/logo-flexy-green.png" alt="Flexy Green" className="h-9 w-auto rounded" /></span>
         </div>
-        <div className="rounded-xl bg-forest p-5 sm:p-7 flex flex-wrap items-center justify-between gap-6" style={{ color: '#fff' }}>
-          <div className="flex flex-col gap-3 max-w-[700px] min-w-0">
-            <span className="spaced" style={{ color: '#5BD892' }}>Flexy Green · Katalii</span>
-            <h1 className="font-display text-[36px] sm:text-[50px] font-bold leading-[.95]">Calculateur <Term k="ets2">EU ETS 2</Term> & TCO flotte</h1>
-            <p className="max-w-[60ch]" style={{ color: 'rgba(255,255,255,.82)' }}>Mesurez ce que la taxe carbone européenne sur les carburants coûtera à votre flotte à partir de 2027, puis découvrez comment la neutraliser.</p>
-            <div><Seg id="mode" value={mode === 'light' ? 'light' : 'full'} onChange={v => v === 'light' ? setMode('light') : toDetailed()}
-              options={[{ v: 'light', label: 'Version allégée' },
-                { v: 'full', label: <span className="inline-flex items-center gap-1.5">{!unlocked && <Icon name="Lock" size={13} />}Version détaillée</span> }]} /></div>
+        <div className="flex flex-col gap-2 max-w-[680px]">
+          <h1 className="font-display text-[28px] sm:text-[36px] font-semibold leading-[1.12]">Combien la taxe carbone <Term k="ets2">EU ETS 2</Term> coûtera-t-elle à votre flotte ?</h1>
+          <p className="text-muted text-[15px] max-w-[60ch]">Estimez le surcoût sur vos carburants à partir de 2027, et ce que Flexy Green et Katalii permettent d'économiser.</p>
+        </div>
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line">
+          <div role="tablist" aria-label="Version du calculateur" className="flex gap-7 text-[14px]">
+            {[['light', 'Version allégée'], ['full', 'Version détaillée']].map(([v, l]) => {
+              const on = (mode === 'light' ? 'light' : 'full') === v;
+              return <button key={v} role="tab" aria-selected={on} onClick={() => v === 'light' ? setMode('light') : toDetailed()}
+                className="-mb-px border-b-2 pb-2.5 font-medium inline-flex items-center gap-1.5 transition-colors"
+                style={{ borderColor: on ? 'var(--emerald)' : 'transparent', color: on ? 'var(--ink)' : 'var(--muted)' }}>
+                {v === 'full' && !unlocked && <Icon name="Lock" size={13} />}{l}</button>;
+            })}
           </div>
-          <img src="assets/logo-flexy-green.png" alt="Flexy Green" className="h-24 w-auto sm:h-32 rounded-lg" />
+          <button onClick={() => set(s => ({ ...defaultState(), step: s.step }))} className="pb-2.5 inline-flex items-center gap-1.5 text-[12px] text-muted hover:text-ink">
+            <Icon name="RotateCcw" size={13} />Revenir à l'exemple</button>
         </div>
       </header>
 
@@ -1014,18 +1008,14 @@ function App() {
       {mode === 'gate' && <LeadGate onUnlock={unlock} onBack={() => setMode('light')} />}
 
       {mode === 'full' && <>
-      <nav aria-label="Étapes" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <nav aria-label="Étapes" className="flex flex-wrap gap-x-8 gap-y-1">
         {STEPS.map((s, i) => {
           const on = st.step === i, done = i < st.step;
           return (
             <button key={s.t} onClick={() => go(i)} aria-current={on ? 'step' : undefined}
-              className="relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors"
-              style={{ borderColor: on ? 'var(--navy)' : 'var(--line)', background: on ? 'var(--surface)' : 'transparent' }}>
-              <span className="num grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-semibold"
-                style={{ background: on ? 'var(--navy)' : done ? 'var(--emerald-soft)' : 'var(--surface-2)', color: on ? 'var(--surface)' : done ? 'var(--emerald-ink)' : 'var(--muted)' }}>
-                {done ? <Icon name="Check" size={14} /> : i + 1}</span>
-              <span className="min-w-0"><span className="block font-semibold text-[13px] leading-tight">{s.t}</span><span className="block text-[12px] text-muted truncate">{s.d}</span></span>
-              {on && <motion.span layoutId="stepbar" className="absolute inset-x-3 -bottom-px h-0.5 rounded bg-navy" />}
+              className="flex items-center gap-2 border-b-2 pb-2 text-[13px] font-medium transition-colors"
+              style={{ borderColor: on ? 'var(--ink)' : 'transparent', color: on ? 'var(--ink)' : 'var(--muted)' }}>
+              <span className="num inline-flex w-4 justify-center" style={{ color: done ? 'var(--emerald-ink)' : undefined }}>{done ? <Icon name="Check" size={14} /> : i + 1}</span>{s.t}
             </button>
           );
         })}
@@ -1040,8 +1030,8 @@ function App() {
             <button onClick={() => go(st.step - 1)} disabled={st.step === 0}
               className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 py-2 text-[13px] font-semibold disabled:opacity-40"><Icon name="ChevronLeft" />Précédent</button>
             {st.step < 3
-              ? <button onClick={() => go(st.step + 1)} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>Suivant : {STEPS[st.step + 1].t}<Icon name="ChevronRight" /></button>
-              : <button onClick={() => setReport(true)} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="FileText" />Voir le rapport</button>}
+              ? <button onClick={() => go(st.step + 1)} className="inline-flex items-center gap-1.5 rounded-md bg-emink px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>Suivant : {STEPS[st.step + 1].t}<Icon name="ChevronRight" /></button>
+              : <button onClick={() => setReport(true)} className="inline-flex items-center gap-1.5 rounded-md bg-emink px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="FileText" />Voir le rapport</button>}
           </div>
         </main>
         <Rail st={st} r={r} openReport={() => setReport(true)} />
