@@ -6,33 +6,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="icon" href="assets/logo-flexy-green.png">
 <style>
+/* Charte : Rouge Berto #EA0021 = le coût carbone (le problème) · Vert Flexy Green #009641 = les solutions.
+   Space Grotesk (charte Groupe Berto) pour le texte, Barlow Condensed en capitales pour les titres (style Flexy Green). */
 :root{
-  --bg:#F3F5F9;--surface:#FFFFFF;--surface-2:#EDF1F7;--ink:#0E1A33;--muted:#56657C;--line:#DCE2EC;
-  --navy:#1E3A8A;--navy-soft:#E6ECF8;--emerald:#10B981;--emerald-ink:#047857;--emerald-soft:#E3F6EE;
-  --slate:#64748B;--slate-light:#A9B5C7;--warn:#B45309;--warn-soft:#FDF1D8;--crit:#B91C1C;--crit-soft:#FBE3E3;
-  --lime:#4D7C0F;--lime-soft:#ECF7D6;--shadow:0 1px 2px rgba(14,26,51,.06),0 8px 24px -12px rgba(14,26,51,.12);
+  --bg:#F5F7F5;--surface:#FFFFFF;--surface-2:#EDF2EE;--ink:#141A16;--muted:#5C6760;--line:#DDE4DF;
+  --navy:#0B4F2C;--navy-soft:#E3F1E7;--emerald:#009641;--emerald-ink:#007A35;--emerald-soft:#E2F3E8;
+  --slate:#6B7570;--slate-light:#B9C3BD;--warn:#B45309;--warn-soft:#FDF1D8;--crit:#EA0021;--crit-soft:#FDE7EA;--red-muted:#F4A7B1;
+  --lime:#4D7C0F;--lime-soft:#ECF7D6;--katalii:#023C4C;--katalii-soft:#E0ECEF;--forest:#0B3D22;
+  --shadow:0 1px 2px rgba(11,61,34,.06),0 8px 24px -12px rgba(11,61,34,.16);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
-  --bg:#0A1120;--surface:#101A2D;--surface-2:#172339;--ink:#E5EBF5;--muted:#93A2BA;--line:#24324B;
-  --navy:#7F9CEB;--navy-soft:#1A2848;--emerald:#34D399;--emerald-ink:#34D399;--emerald-soft:#0F2E25;
-  --slate:#8494AC;--slate-light:#44536C;--warn:#FBBF24;--warn-soft:#352709;--crit:#F87171;--crit-soft:#3A1515;
-  --lime:#A3E635;--lime-soft:#1E2A0C;--shadow:0 1px 2px rgba(0,0,0,.4);}}
+  --bg:#0A110D;--surface:#111A15;--surface-2:#17231C;--ink:#E7EEE9;--muted:#98A69D;--line:#25342B;
+  --navy:#3DD17B;--navy-soft:#12301F;--emerald:#2BC06A;--emerald-ink:#3DD17B;--emerald-soft:#0F2B1B;
+  --slate:#8A968F;--slate-light:#3C4A42;--warn:#FBBF24;--warn-soft:#352709;--crit:#FF4D63;--crit-soft:#3A1219;--red-muted:#7A2632;
+  --lime:#A3E635;--lime-soft:#1E2A0C;--katalii:#6FC0D4;--katalii-soft:#0E2A31;--forest:#0B2A18;--shadow:0 1px 2px rgba(0,0,0,.4);}}
 :root[data-theme="dark"]{color-scheme:dark;
-  --bg:#0A1120;--surface:#101A2D;--surface-2:#172339;--ink:#E5EBF5;--muted:#93A2BA;--line:#24324B;
-  --navy:#7F9CEB;--navy-soft:#1A2848;--emerald:#34D399;--emerald-ink:#34D399;--emerald-soft:#0F2E25;
-  --slate:#8494AC;--slate-light:#44536C;--warn:#FBBF24;--warn-soft:#352709;--crit:#F87171;--crit-soft:#3A1515;
-  --lime:#A3E635;--lime-soft:#1E2A0C;--shadow:0 1px 2px rgba(0,0,0,.4);}
+  --bg:#0A110D;--surface:#111A15;--surface-2:#17231C;--ink:#E7EEE9;--muted:#98A69D;--line:#25342B;
+  --navy:#3DD17B;--navy-soft:#12301F;--emerald:#2BC06A;--emerald-ink:#3DD17B;--emerald-soft:#0F2B1B;
+  --slate:#8A968F;--slate-light:#3C4A42;--warn:#FBBF24;--warn-soft:#352709;--crit:#FF4D63;--crit-soft:#3A1219;--red-muted:#7A2632;
+  --lime:#A3E635;--lime-soft:#1E2A0C;--katalii:#6FC0D4;--katalii-soft:#0E2A31;--forest:#0B2A18;--shadow:0 1px 2px rgba(0,0,0,.4);}
 html,body{background:var(--bg);color:var(--ink)}
-body{font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;margin:0}
-.font-display{font-family:"Archivo","Arial Narrow",system-ui,sans-serif;font-stretch:88%;letter-spacing:-.01em}
-.num{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+body{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;margin:0}
+.font-display{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.num{font-family:"Space Grotesk",system-ui,sans-serif;font-variant-numeric:tabular-nums}
 h1,h2,h3{text-wrap:balance}
 .eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.spaced{letter-spacing:.35em;text-transform:uppercase;font-size:12px;font-weight:500}
 input[type=range]{accent-color:var(--emerald);width:100%}
 input[type=checkbox]{accent-color:var(--emerald);width:16px;height:16px}
-:focus-visible{outline:2px solid var(--navy);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:2px solid var(--emerald);outline-offset:2px;border-radius:4px}
 .term{border-bottom:1px dotted var(--slate);cursor:help;position:relative}
 .bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:min(280px,72vw);
   background:var(--ink);color:var(--bg);font-size:12px;line-height:1.45;font-weight:400;padding:8px 10px;border-radius:6px;z-index:50;
@@ -47,7 +52,7 @@ table{border-collapse:collapse}
 tailwind.config={corePlugins:{preflight:true},theme:{extend:{colors:{
   bg:'var(--bg)',surface:'var(--surface)',surface2:'var(--surface-2)',ink:'var(--ink)',muted:'var(--muted)',line:'var(--line)',
   navy:'var(--navy)',navysoft:'var(--navy-soft)',emerald:'var(--emerald)',emink:'var(--emerald-ink)',emsoft:'var(--emerald-soft)',
-  slate:'var(--slate)',warn:'var(--warn)',warnsoft:'var(--warn-soft)',crit:'var(--crit)',critsoft:'var(--crit-soft)'}}}};
+  katalii:'var(--katalii)',katsoft:'var(--katalii-soft)',forest:'var(--forest)',slate:'var(--slate)',warn:'var(--warn)',warnsoft:'var(--warn-soft)',crit:'var(--crit)',critsoft:'var(--crit-soft)'}}}};
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
@@ -274,7 +279,7 @@ const Tween = ({ value, fmt }) => <>{fmt(useTween(value))}</>;
 function useTokens() {
   const read = () => { const s = getComputedStyle(document.documentElement); const g = n => s.getPropertyValue(n).trim();
     return { ink: g('--ink'), muted: g('--muted'), line: g('--line'), navy: g('--navy'), emerald: g('--emerald'), slate: g('--slate'),
-      slateLight: g('--slate-light'), crit: g('--crit'), surface: g('--surface') }; };
+      slateLight: g('--slate-light'), crit: g('--crit'), redMuted: g('--red-muted'), katalii: g('--katalii'), surface: g('--surface') }; };
   const [t, setT] = useState(read);
   useEffect(() => {
     const mq = matchMedia('(prefers-color-scheme: dark)'); const upd = () => setT(read());
@@ -329,7 +334,7 @@ function Slider({ id, label, value, onChange, min = 0, max = 100, step = 1, disp
 const Panel = ({ title, eyebrow, children, right, className = '' }) => (
   <section className={`rounded-xl border border-line bg-surface p-4 sm:p-5 flex flex-col gap-4 ${className}`}>
     {(title || eyebrow) && <header className="flex flex-wrap items-end justify-between gap-2">
-      <div>{eyebrow && <div className="eyebrow">{eyebrow}</div>}{title && <h3 className="font-display text-[17px] font-semibold">{title}</h3>}</div>{right}
+      <div>{eyebrow && <div className="eyebrow">{eyebrow}</div>}{title && <h3 className="font-display text-[20px] font-semibold leading-tight">{title}</h3>}</div>{right}
     </header>}
     {children}
   </section>
@@ -547,11 +552,11 @@ function StepResults({ st, r }) {
             <RC.Legend wrapperStyle={{ fontSize: 12, color: t.muted }} />
             <RC.Bar dataKey="base" name="Énergie hors ETS 2" stackId="a" fill={t.slateLight} />
             <RC.Bar dataKey="ets" name="Surcoût ETS 2" stackId="a" radius={[4, 4, 0, 0]}>
-              {r.chart1.map(d => <RC.Cell key={d.name} fill={d.current ? t.crit : t.navy} />)}
+              {r.chart1.map(d => <RC.Cell key={d.name} fill={d.current ? t.crit : t.redMuted} />)}
             </RC.Bar>
           </RC.BarChart>
         </ChartShell>
-        <p className="text-[12px] text-muted">Barre rouge : scénario retenu ({r.p.price} €/t). Mix actuel, sans levier d'optimisation.</p>
+        <p className="text-[12px] text-muted">Rouge vif : scénario retenu ({r.p.price} €/t). Mix actuel, sans levier d'optimisation.</p>
       </Panel>
 
       <Panel eyebrow="Détail" title="Exposition par catégorie">
@@ -615,9 +620,9 @@ function StepLevers({ st, set, r }) {
             <Slider id="kmcut" label="Kilomètres évités" min={15} max={20} value={st.levers.kmCut} onChange={v => setL({ kmCut: v })} display={`−${st.levers.kmCut} %`} />
             <Slider id="consocut" label="Consommation (éco-conduite)" min={5} max={8} value={st.levers.consoCut} onChange={v => setL({ consoCut: v })} display={`−${st.levers.consoCut} %`} />
           </div>
-          <div className="rounded-lg bg-emsoft px-4 py-3 flex items-center justify-between gap-3">
-            <span className="text-[13px] text-emink font-medium">Carburant + ETS 2 économisés</span>
-            <span className="num text-[20px] font-semibold text-emink"><Tween value={S.energyKat + S.etsKat} fmt={v => eur(v)} /></span>
+          <div className="rounded-lg bg-katsoft px-4 py-3 flex items-center justify-between gap-3">
+            <span className="text-[13px] text-katalii font-medium">Carburant + ETS 2 économisés</span>
+            <span className="num text-[20px] font-semibold text-katalii"><Tween value={S.energyKat + S.etsKat} fmt={v => eur(v)} /></span>
           </div>
         </Panel>
       </div>
@@ -838,8 +843,12 @@ function LightCalc({ st, set, r, unlocked, onDetailed }) {
   const alt = st.mix.bio + st.mix.elec;
   const setAlt = v => set(s => { const elec = Math.min(s.mix.elec, v); return { ...s, mix: { bio: v - elec, elec } }; });
   const perVeh = r.now.vehicles ? r.now.ets / r.now.vehicles : 0;
+  // Aperçu Katalii aux valeurs basses de la fourchette (−15 % km, −5 % conso), sur le carburant et la taxe uniquement
+  const kat = fleetCost(st.fleet, r.cur, r.p, { kmFactor: .85, consoFactor: .95 });
+  const katGain = (r.now.energy + r.now.ets) - (kat.energy + kat.ets);
+  const mini = (label, node) => <div className="min-w-0"><div className="text-[12px] text-muted">{label}</div><div className="num text-[16px] font-semibold">{node}</div></div>;
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_400px]">
       <Panel eyebrow="Votre flotte" title="Trois réglages pour un ordre de grandeur">
         <div className="grid gap-4 sm:grid-cols-3">
           {CATS.map(c => (
@@ -856,23 +865,36 @@ function LightCalc({ st, set, r, unlocked, onDetailed }) {
             options={SCENARIOS.map(s => ({ v: s.price, label: `${s.price} €/t · ${s.label}` }))} />
         </div>
         <p className="text-[12px] text-muted">Kilométrages et consommations types d'une flotte de transport. Vous pourrez les ajuster dans la version détaillée.</p>
+        <div className="rounded-lg bg-surface2 p-4 flex gap-3 text-[13px]">
+          <span className="text-crit mt-0.5"><Icon name="Calendar" size={17} /></span>
+          <span><b>Quand ?</b> La taxe s'applique aux carburants livrés à partir de 2027, un report à 2028 reste possible.
+            Les distributeurs la répercutent directement sur le prix à la pompe : vous la paierez dans votre facture de carburant.</span>
+        </div>
       </Panel>
 
       <aside className="rounded-xl border border-line bg-surface p-5 flex flex-col gap-4 self-start" style={{ boxShadow: 'var(--shadow)' }}>
-        <div className="flex items-center justify-between"><span className="eyebrow">Votre résultat</span>
-          <span className="num rounded-full bg-navysoft px-2 py-0.5 text-[12px] font-semibold text-navy">{st.market.price} €/t</span></div>
-        <div><div className="text-[13px] text-muted">Surcoût <Term k="ets2">ETS 2</Term> par an</div>
-          <div className="num text-[38px] font-semibold leading-tight"><Tween value={r.now.ets} fmt={v => eur(v)} /></div></div>
-        <div className="grid grid-cols-2 gap-3 text-[12px]">
-          <div><div className="text-muted">Par véhicule et par an</div><div className="num text-[16px] font-semibold"><Tween value={perVeh} fmt={v => eur(v)} /></div></div>
-          <div><div className="text-muted">Par kilomètre</div><div className="num text-[16px] font-semibold"><Tween value={r.cKmAvg} fmt={v => `${nf(3).format(v)} €`} /></div></div>
+        <div className="flex items-center justify-between"><span className="eyebrow">Votre surcoût <Term k="ets2">ETS 2</Term></span>
+          <span className="num rounded-full bg-critsoft px-2 py-0.5 text-[12px] font-semibold text-crit">{st.market.price} €/t</span></div>
+        <div className="num text-[40px] font-bold leading-none text-crit"><Tween value={r.now.ets} fmt={v => eur(v)} /><span className="text-[14px] font-normal text-muted"> /an</span></div>
+        <div className="grid grid-cols-3 gap-3">
+          {mini('Par véhicule / mois', <Tween value={perVeh / 12} fmt={v => eur(v)} />)}
+          {mini('Par kilomètre', <Tween value={r.cKmAvg} fmt={v => `${nf(3).format(v)} €`} />)}
+          {mini('Au litre de gazole', `+${nf(2).format(surcoutLitre(FE.diesel, st.market.price))} €`)}
         </div>
+        <p className="text-[12px] text-muted">Soit <b className="num text-ink">{eur(r.now.ets * 4)}</b> cumulés de 2027 à 2030, à prix du quota constant.</p>
         <div className="border-t border-line pt-4"><ClassBadge pctClean={r.clean} /></div>
-        <div className="rounded-lg bg-surface2 p-4 flex flex-col gap-3">
-          <p className="text-[13px]">La version détaillée chiffre l'impact sur votre marge, les économies Flexy Green et Katalii, le TCO par énergie, et produit un rapport.</p>
-          <button onClick={onDetailed} className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
-            <Icon name={unlocked ? 'ArrowRight' : 'Lock'} size={15} />Accéder à la version détaillée</button>
+        <div className="rounded-lg border border-line p-4 flex flex-col gap-3">
+          <span className="font-display text-[17px] font-semibold">Vos leviers</span>
+          <div className="flex gap-3 text-[13px]"><span className="text-emink mt-0.5"><Icon name="Leaf" size={17} /></span>
+            <span><b className="text-emink">Flexy Green</b> : 0 € de taxe sur chaque véhicule passé au B100, au HVO100, au Bio-GNC ou à l'électrique,
+              soit <b className="num">{eur(perVeh)}</b> évités par véhicule et par an.</span></div>
+          <div className="flex gap-3 text-[13px]"><span className="text-katalii mt-0.5"><Icon name="Route" size={17} /></span>
+            <span><b className="text-katalii">Katalii</b> : l'optimisation des tournées et l'éco-conduite réduisent la facture carburant et la taxe
+              d'environ <b className="num">{eur(katGain)}</b> par an.</span></div>
         </div>
+        <button onClick={onDetailed} className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald px-3 py-3 text-[14px] font-semibold text-white">
+          <Icon name={unlocked ? 'ArrowRight' : 'Lock'} size={15} />Chiffrer mon plan d'action</button>
+        <p className="text-[12px] text-muted -mt-2 text-center">Version détaillée : impact sur la marge, TCO par énergie, rapport.</p>
       </aside>
     </div>
   );
@@ -969,18 +991,22 @@ function App() {
   const unlock = () => { try { localStorage.setItem(UNLOCK_KEY, '1'); } catch {} setUnlocked(true); setMode('full'); scrollTo({ top: 0 }); };
   return (
     <div className="mx-auto max-w-[1240px] px-4 sm:px-6 py-6 flex flex-col gap-5">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <span className="eyebrow flex items-center gap-2"><i className="inline-block h-2 w-2 rounded-sm bg-emerald" />Groupe Berto · Katalii</span>
-          <h1 className="font-display text-[28px] sm:text-[34px] font-bold leading-[1.05]">Calculateur <Term k="ets2">EU ETS 2</Term> & TCO flotte</h1>
-          <p className="text-muted max-w-[62ch]">Mesurez ce que la taxe carbone européenne sur les carburants coûtera à votre flotte à partir de 2027, puis simulez les leviers pour la neutraliser.</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Seg id="mode" value={mode === 'light' ? 'light' : 'full'} onChange={v => v === 'light' ? setMode('light') : toDetailed()}
-            options={[{ v: 'light', label: 'Version allégée' },
-              { v: 'full', label: <span className="inline-flex items-center gap-1.5">{!unlocked && <Icon name="Lock" size={13} />}Version détaillée</span> }]} />
+      <header className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4">
+          <span className="inline-flex rounded-md bg-white px-2.5 py-1.5 border border-line"><img src="assets/logo-berto.png" alt="Groupe Berto" className="h-7 w-auto" /></span>
           <button onClick={() => set(s => ({ ...defaultState(), step: s.step }))} className="inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink">
             <Icon name="RotateCcw" size={14} />Revenir à l'exemple</button>
+        </div>
+        <div className="rounded-xl bg-forest p-5 sm:p-7 flex flex-wrap items-center justify-between gap-6" style={{ color: '#fff' }}>
+          <div className="flex flex-col gap-3 max-w-[700px] min-w-0">
+            <span className="spaced" style={{ color: '#5BD892' }}>Flexy Green · Katalii</span>
+            <h1 className="font-display text-[36px] sm:text-[50px] font-bold leading-[.95]">Calculateur <Term k="ets2">EU ETS 2</Term> & TCO flotte</h1>
+            <p className="max-w-[60ch]" style={{ color: 'rgba(255,255,255,.82)' }}>Mesurez ce que la taxe carbone européenne sur les carburants coûtera à votre flotte à partir de 2027, puis découvrez comment la neutraliser.</p>
+            <div><Seg id="mode" value={mode === 'light' ? 'light' : 'full'} onChange={v => v === 'light' ? setMode('light') : toDetailed()}
+              options={[{ v: 'light', label: 'Version allégée' },
+                { v: 'full', label: <span className="inline-flex items-center gap-1.5">{!unlocked && <Icon name="Lock" size={13} />}Version détaillée</span> }]} /></div>
+          </div>
+          <img src="assets/logo-flexy-green.png" alt="Flexy Green" className="h-24 w-auto sm:h-32 rounded-lg" />
         </div>
       </header>
 
