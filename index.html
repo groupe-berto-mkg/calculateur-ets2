@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<title>Calculateur ETS 2 Flotte</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9;--surface:#FFFFFF;--surface-2:#EDF1F7;--ink:#0E1A33;--muted:#56657C;--line:#DCE2EC;
+  --navy:#1E3A8A;--navy-soft:#E6ECF8;--emerald:#10B981;--emerald-ink:#047857;--emerald-soft:#E3F6EE;
+  --slate:#64748B;--slate-light:#A9B5C7;--warn:#B45309;--warn-soft:#FDF1D8;--crit:#B91C1C;--crit-soft:#FBE3E3;
+  --lime:#4D7C0F;--lime-soft:#ECF7D6;--shadow:0 1px 2px rgba(14,26,51,.06),0 8px 24px -12px rgba(14,26,51,.12);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0A1120;--surface:#101A2D;--surface-2:#172339;--ink:#E5EBF5;--muted:#93A2BA;--line:#24324B;
+  --navy:#7F9CEB;--navy-soft:#1A2848;--emerald:#34D399;--emerald-ink:#34D399;--emerald-soft:#0F2E25;
+  --slate:#8494AC;--slate-light:#44536C;--warn:#FBBF24;--warn-soft:#352709;--crit:#F87171;--crit-soft:#3A1515;
+  --lime:#A3E635;--lime-soft:#1E2A0C;--shadow:0 1px 2px rgba(0,0,0,.4);}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0A1120;--surface:#101A2D;--surface-2:#172339;--ink:#E5EBF5;--muted:#93A2BA;--line:#24324B;
+  --navy:#7F9CEB;--navy-soft:#1A2848;--emerald:#34D399;--emerald-ink:#34D399;--emerald-soft:#0F2E25;
+  --slate:#8494AC;--slate-light:#44536C;--warn:#FBBF24;--warn-soft:#352709;--crit:#F87171;--crit-soft:#3A1515;
+  --lime:#A3E635;--lime-soft:#1E2A0C;--shadow:0 1px 2px rgba(0,0,0,.4);}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;margin:0}
+.font-display{font-family:"Archivo","Arial Narrow",system-ui,sans-serif;font-stretch:88%;letter-spacing:-.01em}
+.num{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+input[type=range]{accent-color:var(--emerald);width:100%}
+input[type=checkbox]{accent-color:var(--emerald);width:16px;height:16px}
+:focus-visible{outline:2px solid var(--navy);outline-offset:2px;border-radius:4px}
+.term{border-bottom:1px dotted var(--slate);cursor:help;position:relative}
+.bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:min(280px,72vw);
+  background:var(--ink);color:var(--bg);font-size:12px;line-height:1.45;font-weight:400;padding:8px 10px;border-radius:6px;z-index:50;
+  text-transform:none;letter-spacing:0;pointer-events:none;white-space:normal}
+.scroll-x{overflow-x:auto}
+table{border-collapse:collapse}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{body *{visibility:hidden}#report,#report *{visibility:visible}#report{position:absolute;inset:0;overflow:visible;box-shadow:none;max-height:none}.no-print{display:none!important}}
+</style>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config={corePlugins:{preflight:true},theme:{extend:{colors:{
+  bg:'var(--bg)',surface:'var(--surface)',surface2:'var(--surface-2)',ink:'var(--ink)',muted:'var(--muted)',line:'var(--line)',
+  navy:'var(--navy)',navysoft:'var(--navy-soft)',emerald:'var(--emerald)',emink:'var(--emerald-ink)',emsoft:'var(--emerald-soft)',
+  slate:'var(--slate)',warn:'var(--warn)',warnsoft:'var(--warn-soft)',crit:'var(--crit)',critsoft:'var(--crit-soft)'}}}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/recharts@2.12.7/umd/Recharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@11.0.8/dist/framer-motion.js"></script>
+<script>window.react = window.React; // le build UMD de lucide-react lit le global « react »</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.25.6/babel.min.js"></script>
+
+</head>
+<body>
+<div role="note" style="background:var(--warn-soft);color:var(--warn);font-size:12px;padding:8px 16px;text-align:center">Prototype interne · Les loyers, coûts de maintenance et prix affichés sont indicatifs et ne constituent pas une offre commerciale.</div>
+<div id="root"><p style="padding:32px 16px;color:#56657C">Chargement du calculateur… Une connexion internet est nécessaire pour charger React et les graphiques.</p></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useEffect, useRef } = React;
+
+/* ============================================================
+   1. RÉFÉRENTIEL (facteurs MRR, profils véhicules, hypothèses)
+   ============================================================ */
+// Facteurs d'émission tank-to-wheel retenus pour l'ETS 2 (Règlement MRR (UE) 2018/2066)
+const FE = { diesel: 0.00268, essence: 0.00235, gnc: 0.00275 }; // tCO2 par L ou par kg
+
+const ENERGIES = {
+  b7:   { label: 'Gazole B7',  unit: 'L',   consoFactor: 1 },
+  b100: { label: 'B100',       unit: 'L',   consoFactor: 1.05 }, // PCI plus faible que le gazole
+  gnc:  { label: 'Bio-GNC',    unit: 'kg',  consoFactor: 0.95 },
+  bev:  { label: 'Électrique', unit: 'kWh', consoFactor: null },
+};
+const ENERGY_KEYS = ['b7', 'b100', 'gnc', 'bev'];
+
+// Hypothèses LLD indicatives (loyer mensuel HT, maintenance €/km) — à remplacer par la grille Berto réelle
+const CATS = [
+  { id: 'lcv', label: 'VUL / Utilitaires', short: 'VUL', kwh: 22,
+    loyer: { b7: 650, b100: 670, gnc: 790, bev: 1050 }, maint: { b7: .05, b100: .055, gnc: .055, bev: .035 } },
+  { id: 'p19', label: 'Porteurs 19 t', short: 'Porteur 19 t', kwh: 105,
+    loyer: { b7: 2400, b100: 2450, gnc: 2900, bev: 4200 }, maint: { b7: .12, b100: .13, gnc: .13, bev: .08 } },
+  { id: 't44', label: 'Tracteurs 44 t', short: 'Tracteur 44 t', kwh: 125,
+    loyer: { b7: 2600, b100: 2650, gnc: 3100, bev: 5200 }, maint: { b7: .10, b100: .11, gnc: .11, bev: .07 } },
+];
+
+const SCENARIOS = [
+  { price: 45,  label: 'Modéré',      sub: 'Plafond MSR', term: 'msr' },
+  { price: 60,  label: 'Référence',   sub: 'Fit for 55' },
+  { price: 100, label: 'Stricte',     sub: 'Décarbonation accélérée' },
+];
+
+const CLASSES = [
+  { id: 'A+', min: 100, tone: 'em',   text: 'Risque ETS 2 neutralisé' },
+  { id: 'A',  min: 80,  tone: 'em',   text: 'Excellente résilience' },
+  { id: 'B',  min: 50,  tone: 'lime', text: 'Exposition modérée' },
+  { id: 'C',  min: 20,  tone: 'warn', text: 'Risque budgétaire avéré' },
+  { id: 'D',  min: -1,  tone: 'crit', text: 'Vulnérabilité critique' },
+];
+
+const GLOSSARY = {
+  ets2: "Second système d'échange de quotas de l'UE (directive (UE) 2023/959). Les distributeurs de carburant achètent des quotas EUA2 et répercutent leur coût à la pompe. Démarrage prévu en 2027, report possible à 2028.",
+  eua2: "Quota d'émission ETS 2 : 1 quota couvre 1 tCO2. Son prix se forme aux enchères.",
+  mrr: "Règlement (UE) 2018/2066 sur la surveillance et la déclaration des émissions. Il fixe les facteurs d'émission par défaut, par exemple 2,68 kgCO2 par litre de gazole.",
+  red: "Directive énergies renouvelables (RED II 2018/2001, révisée par RED III 2023/2413). Elle fixe les critères de durabilité des biocarburants.",
+  zero: "Zero-rating : un biocarburant certifié durable reçoit un facteur d'émission nul dans l'ETS 2. Il ne supporte aucun coût carbone.",
+  msr: "Réserve de stabilité du marché. Si le prix dépasse 45 €/t (euros 2020, environ 59 € courants au lancement), 20 millions de quotas supplémentaires sont libérés pour freiner la hausse.",
+  alpha: "Part du surcoût ETS 2 que vous refacturez à vos clients (indexation gazole, surcharge carbone). Le reste, 1 − α, est absorbé par votre EBITDA.",
+  pos: "Proof of Sustainability : certificat de durabilité qui accompagne chaque lot de biocarburant. Sans PoS valide, le lot est taxé comme du fossile.",
+  iso: "ISO 14083:2023 : quantification des émissions des chaînes de transport (cadre GLEC). Elle demande un calcul du puits à la roue (WTW).",
+  csrd: "Directive européenne sur le reporting de durabilité. Les émissions de la flotte en propre relèvent du scope 1 (norme ESRS E1).",
+  ttw: "Tank-to-wheel : émissions à la combustion uniquement. C'est le périmètre retenu par l'ETS 2.",
+};
+
+/* ============================================================
+   2. MOTEUR DE CALCUL (fonctions pures, testables)
+   ============================================================ */
+const surcoutLitre = (fe, price) => fe * price;                                   // Éq. 3 : €/L HT
+const cKm = (conso100, fe, price, shareBio = 0) => (conso100 / 100) * fe * price * (1 - shareBio); // Éq. 2
+const cEts2 = (volume, fe, price, shareBio = 0) => volume * fe * price * (1 - shareBio);          // Éq. 1
+
+function feEts(k, pos) {
+  if (k === 'b7') return FE.diesel;
+  if (k === 'b100') return pos ? 0 : FE.diesel;
+  if (k === 'gnc') return pos ? 0 : FE.gnc;
+  return 0; // BEV / FCEV : hors périmètre ETS 2
+}
+function conso100(cat, fleetRow, k) {
+  return k === 'bev' ? cat.kwh : fleetRow.conso * ENERGIES[k].consoFactor;
+}
+// Coût annuel d'UN véhicule de la catégorie `cat` roulant à l'énergie `k` (Éq. 3 TCO)
+function vehicleCost(cat, row, k, p, o = {}) {
+  const km = row.km * (o.kmFactor ?? 1);
+  const per100 = conso100(cat, row, k) * (o.consoFactor ?? 1);
+  const volume = km * per100 / 100;
+  const co2 = volume * feEts(k, p.pos);
+  const loyer = cat.loyer[k] * 12, energy = volume * p.prices[k], ets = co2 * p.price, maint = cat.maint[k] * km;
+  return { km, volume, co2, loyer, energy, ets, maint, total: loyer + energy + ets + maint, totalExEts: loyer + energy + maint };
+}
+// Agrégat flotte pour une répartition d'énergies `shares` (somme = 1)
+function fleetCost(fleet, shares, p, o = {}) {
+  const t = { loyer: 0, energy: 0, ets: 0, maint: 0, total: 0, co2: 0, km: 0, fossilVolume: 0, liquidVolume: 0, vehicles: 0, byCat: {} };
+  for (const cat of CATS) {
+    const row = fleet[cat.id];
+    const c = { ets: 0, km: 0, co2: 0 };
+    for (const k of ENERGY_KEYS) {
+      const n = row.count * (shares[k] || 0);
+      if (!n) continue;
+      const v = vehicleCost(cat, row, k, p, o);
+      for (const f of ['loyer', 'energy', 'ets', 'maint', 'total', 'co2']) t[f] += n * v[f];
+      t.km += n * v.km;
+      if (k !== 'bev') t.liquidVolume += n * v.volume;
+      if (v.co2 > 0) t.fossilVolume += n * v.volume;
+      c.ets += n * v.ets; c.km += n * v.km; c.co2 += n * v.co2;
+    }
+    t.vehicles += row.count;
+    t.byCat[cat.id] = c;
+  }
+  return t;
+}
+const cleanShare = (s, pos) => 100 * ((s.bev || 0) + (pos ? (s.b100 || 0) + (s.gnc || 0) : 0));
+const classOf = pct => CLASSES.find(c => pct >= c.min - 1e-9) || CLASSES[CLASSES.length - 1];
+
+function simulate(st) {
+  const p = { price: st.market.price, prices: st.market.prices, pos: st.pos };
+  const diesel = 100 - st.mix.bio - st.mix.elec;
+  const cur = { b7: diesel / 100, b100: st.mix.bio / 100, gnc: 0, bev: st.mix.elec / 100 };
+  const L = st.levers;
+  const moved = cur.b7 * L.conv / 100;
+  const optS = { ...cur, b7: cur.b7 - moved }; optS[L.target] += moved;
+  const kat = L.katalii ? { kmFactor: 1 - L.kmCut / 100, consoFactor: 1 - L.consoCut / 100 } : {};
+
+  const now = fleetCost(st.fleet, cur, p);
+  const convOnly = fleetCost(st.fleet, optS, p);
+  const opt = fleetCost(st.fleet, optS, p, kat);
+
+  const ebitda0 = st.fin.ca * st.fin.margin / 100;
+  const absorbed = s => s.ets * (1 - st.fin.alpha / 100);                        // Éq. 4
+  const eb = s => ({ loss: absorbed(s), pctEbitda: ebitda0 ? absorbed(s) / ebitda0 * 100 : 0, pts: st.fin.ca ? absorbed(s) / st.fin.ca * 100 : 0 });
+
+  const scen = [0, ...SCENARIOS.map(s => s.price)];
+  if (!scen.includes(p.price)) scen.push(p.price);
+  const chart1 = scen.sort((a, b) => a - b).map(pr => ({
+    name: pr === 0 ? 'Sans ETS 2' : `${pr} €/t`, price: pr, base: now.energy, ets: now.co2 * pr, current: pr === p.price,
+  }));
+  return {
+    p, diesel, cur, optS, now, convOnly, opt, ebitda0,
+    ebNow: eb(now), ebOpt: eb(opt),
+    cKmAvg: now.km ? now.ets / now.km : 0,
+    clean: cleanShare(cur, st.pos), cleanOpt: cleanShare(optS, st.pos),
+    savings: {
+      etsConv: now.ets - convOnly.ets, etsKat: convOnly.ets - opt.ets,
+      energyConv: now.energy - convOnly.energy, energyKat: convOnly.energy - opt.energy,
+      rentMaint: (now.loyer + now.maint) - (opt.loyer + opt.maint), total: now.total - opt.total,
+    },
+    chart1,
+  };
+}
+
+// Tableau TCO par véhicule + prix EUA2 d'équilibre face au gazole
+function tcoTable(catId, st) {
+  const cat = CATS.find(c => c.id === catId), row = st.fleet[catId];
+  const p = { price: st.market.price, prices: st.market.prices, pos: st.pos };
+  const cols = ENERGY_KEYS.map(k => ({ k, ...vehicleCost(cat, row, k, p) }));
+  const b7 = cols[0];
+  return cols.map(c => {
+    const dCo2 = b7.co2 - c.co2, dCost = c.totalExEts - b7.totalExEts;
+    let be = null;
+    if (c.k !== 'b7') be = dCo2 <= 0 ? NaN : dCost <= 0 ? 0 : dCost / dCo2;
+    return { ...c, delta: c.total - b7.total, perKm: row.km ? c.total / row.km : 0, breakEven: be };
+  });
+}
+
+// Contrôles de non-régression (exemples du cahier des charges), visibles dans la console
+(function selfTest() {
+  const near = (a, b, e = 1e-4) => Math.abs(a - b) < e;
+  const checks = [
+    ['Surcoût gazole 60 €/t = 0,1608 €/L', near(surcoutLitre(FE.diesel, 60), 0.1608)],
+    ['c_km porteur 28 L à 60 €/t = 0,04502 €/km', near(cKm(28, FE.diesel, 60), 0.04502, 1e-5)],
+    ['Biocarburant certifié = 0 €', cEts2(1000, FE.diesel, 60, 1) === 0],
+    ['Classe 100 % = A+', classOf(100).id === 'A+'],
+    ['Classe 80 % = A', classOf(80).id === 'A'],
+    ['Classe 79 % = B', classOf(79).id === 'B'],
+    ['Classe 19 % = D', classOf(19).id === 'D'],
+  ];
+  const ko = checks.filter(c => !c[1]);
+  console[ko.length ? 'error' : 'info'](`[ETS2] ${checks.length - ko.length}/${checks.length} contrôles OK`, ko.map(c => c[0]));
+})();
+
+/* ============================================================
+   3. FORMATAGE & PRIMITIVES UI
+   ============================================================ */
+const nf = d => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = (v, d = 0) => nf(d).format(v) + ' €';
+const keur = (v, d = 1) => nf(d).format(v / 1000) + ' k€';
+const num = (v, d = 0) => nf(d).format(v);
+const pct = (v, d = 0) => nf(d).format(v) + ' %';
+
+const FM = window.Motion || {};
+const passthrough = {};
+const motion = FM.motion || new Proxy({}, { get: (_, tag) => passthrough[tag] || (passthrough[tag] =
+  React.forwardRef(({ initial, animate, exit, transition, layout, whileHover, whileTap, ...rest }, ref) => React.createElement(tag, { ref, ...rest }))) });
+const AnimatePresence = FM.AnimatePresence || (({ children }) => children);
+
+const Lucide = window.LucideReact || {};
+const Icon = ({ name, size = 16, className = '' }) => {
+  const C = Lucide[name];
+  return C ? <C size={size} strokeWidth={1.8} className={className} aria-hidden="true" /> : <span style={{ width: size, display: 'inline-block' }} />;
+};
+const RC = window.Recharts || {};
+
+const reduceMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function useTween(value, ms = 450) {
+  const [v, setV] = useState(value);
+  const from = useRef(value);
+  useEffect(() => {
+    if (reduceMotion) { setV(value); from.current = value; return; }
+    const a = from.current, t0 = performance.now(); let raf;
+    const step = t => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3); const x = a + (value - a) * e;
+      setV(x); from.current = x; if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return v;
+}
+const Tween = ({ value, fmt }) => <>{fmt(useTween(value))}</>;
+
+function useTokens() {
+  const read = () => { const s = getComputedStyle(document.documentElement); const g = n => s.getPropertyValue(n).trim();
+    return { ink: g('--ink'), muted: g('--muted'), line: g('--line'), navy: g('--navy'), emerald: g('--emerald'), slate: g('--slate'),
+      slateLight: g('--slate-light'), crit: g('--crit'), surface: g('--surface') }; };
+  const [t, setT] = useState(read);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)'); const upd = () => setT(read());
+    mq.addEventListener('change', upd);
+    const mo = new MutationObserver(upd); mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => { mq.removeEventListener('change', upd); mo.disconnect(); };
+  }, []);
+  return t;
+}
+
+function Term({ k, children }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className="term" tabIndex={0} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)} onBlur={() => setOpen(false)} aria-label={`${typeof children === 'string' ? children : ''} : ${GLOSSARY[k]}`}>
+      {children}
+      {open && <span className="bubble" role="tooltip">{GLOSSARY[k]}</span>}
+    </span>
+  );
+}
+
+function NumField({ id, label, value, onChange, suffix, step = 1, min = 0, max }) {
+  const [txt, setTxt] = useState(String(value));
+  useEffect(() => { if (parseFloat(txt.replace(',', '.')) !== value) setTxt(String(value)); }, [value]);
+  return (
+    <label htmlFor={id} className="flex flex-col gap-1 min-w-0">
+      <span className="text-[12px] text-muted">{label}</span>
+      <span className="flex items-center rounded-md border border-line bg-surface focus-within:border-navy">
+        <input id={id} inputMode="decimal" className="num w-full min-w-0 bg-transparent px-2.5 py-1.5 text-[14px] outline-none text-ink"
+          value={txt} onChange={e => { setTxt(e.target.value); const v = parseFloat(e.target.value.replace(',', '.'));
+            if (!isNaN(v)) onChange(Math.max(min, max != null ? Math.min(max, v) : v)); }}
+          onBlur={() => setTxt(String(value))} />
+        {suffix && <span className="pr-2.5 text-[12px] text-muted whitespace-nowrap">{suffix}</span>}
+      </span>
+    </label>
+  );
+}
+
+function Slider({ id, label, value, onChange, min = 0, max = 100, step = 1, display, hint }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between gap-3">
+        <label htmlFor={id} className="text-[13px] text-ink">{label}</label>
+        <span className="num text-[14px] font-semibold text-ink">{display ?? value}</span>
+      </div>
+      <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} />
+      {hint && <span className="text-[12px] text-muted">{hint}</span>}
+    </div>
+  );
+}
+
+const Panel = ({ title, eyebrow, children, right, className = '' }) => (
+  <section className={`rounded-xl border border-line bg-surface p-4 sm:p-5 flex flex-col gap-4 ${className}`}>
+    {(title || eyebrow) && <header className="flex flex-wrap items-end justify-between gap-2">
+      <div>{eyebrow && <div className="eyebrow">{eyebrow}</div>}{title && <h3 className="font-display text-[17px] font-semibold">{title}</h3>}</div>{right}
+    </header>}
+    {children}
+  </section>
+);
+
+const TONES = {
+  em: { fg: 'var(--emerald-ink)', bg: 'var(--emerald-soft)' }, lime: { fg: 'var(--lime)', bg: 'var(--lime-soft)' },
+  warn: { fg: 'var(--warn)', bg: 'var(--warn-soft)' }, crit: { fg: 'var(--crit)', bg: 'var(--crit-soft)' },
+};
+function ClassBadge({ pctClean, size = 'lg' }) {
+  const c = classOf(pctClean), t = TONES[c.tone];
+  const big = size === 'lg';
+  return (
+    <motion.div key={c.id} initial={{ scale: .85, opacity: .4 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 320, damping: 20 }}
+      className="inline-flex items-center gap-3" title={c.text}>
+      <span className="font-display font-extrabold grid place-items-center rounded-lg"
+        style={{ color: t.fg, background: t.bg, width: big ? 56 : 36, height: big ? 56 : 36, fontSize: big ? 26 : 16, border: `1.5px solid ${t.fg}` }}>{c.id}</span>
+      {big && <span className="flex flex-col leading-tight"><span className="font-semibold" style={{ color: t.fg }}>{c.text}</span>
+        <span className="text-[12px] text-muted">{pct(pctClean)} d'énergies alternatives</span></span>}
+    </motion.div>
+  );
+}
+
+function Kpi({ label, value, sub, tone, icon }) {
+  return (
+    <div className="rounded-lg border border-line bg-surface p-4 flex flex-col gap-1.5 min-w-0">
+      <div className="flex items-center gap-2 text-muted"><Icon name={icon} size={15} /><span className="eyebrow">{label}</span></div>
+      <div className="num text-[24px] font-semibold leading-none" style={{ color: tone || 'var(--ink)' }}>{value}</div>
+      {sub && <div className="text-[12px] text-muted">{sub}</div>}
+    </div>
+  );
+}
+
+const Seg = ({ options, value, onChange, id }) => (
+  <div role="radiogroup" aria-labelledby={id} className="inline-flex flex-wrap rounded-lg border border-line bg-surface2 p-0.5 gap-0.5">
+    {options.map(o => (
+      <button key={o.v} role="radio" aria-checked={value === o.v} onClick={() => onChange(o.v)}
+        className={`px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors ${value === o.v ? 'bg-surface text-ink shadow-sm' : 'text-muted hover:text-ink'}`}>{o.label}</button>
+    ))}
+  </div>
+);
+
+/* ============================================================
+   4. ÉTAPES DU WIZARD
+   ============================================================ */
+function StepFleet({ st, set, r }) {
+  const upd = (id, f, v) => set(s => ({ ...s, fleet: { ...s.fleet, [id]: { ...s.fleet[id], [f]: v } } }));
+  const setMix = (f, v) => set(s => { const other = f === 'bio' ? s.mix.elec : s.mix.bio; return { ...s, mix: { ...s.mix, [f]: Math.min(v, 100 - other) } }; });
+  const bars = [['Gazole B7', r.diesel, 'var(--slate)'], ['Biocarburants', st.mix.bio, 'var(--emerald)'], ['Électrique / H2', st.mix.elec, 'var(--navy)']];
+  return (
+    <div className="flex flex-col gap-4">
+      <Panel eyebrow="Parc" title="Véhicules par catégorie">
+        <div className="flex flex-col divide-y divide-[var(--line)]">
+          {CATS.map(c => {
+            const row = st.fleet[c.id];
+            return (
+              <div key={c.id} className="grid gap-3 py-3 first:pt-0 last:pb-0 sm:grid-cols-[1.3fr_1fr_1fr_1fr] items-end">
+                <div className="flex flex-col">
+                  <span className="font-semibold flex items-center gap-2"><Icon name="Truck" size={16} className="text-navy" />{c.label}</span>
+                  <span className="num text-[12px] text-muted">{num(row.count * row.km * row.conso / 100)} L/an si 100 % gazole</span>
+                </div>
+                <NumField id={`n-${c.id}`} label="Nombre" value={row.count} onChange={v => upd(c.id, 'count', Math.round(v))} suffix="véh." />
+                <NumField id={`km-${c.id}`} label="Kilométrage" value={row.km} step={1000} onChange={v => upd(c.id, 'km', v)} suffix="km/an" />
+                <NumField id={`c-${c.id}`} label="Consommation" value={row.conso} onChange={v => upd(c.id, 'conso', v)} suffix="L/100 km" max={80} />
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+
+      <Panel eyebrow="Énergies" title="Mix énergétique actuel">
+        <div className="flex h-3 w-full overflow-hidden rounded-full bg-surface2" aria-hidden="true">
+          {bars.map(([l, v, col]) => <motion.div key={l} animate={{ width: `${v}%` }} style={{ background: col, width: `${v}%` }} transition={{ duration: .35 }} />)}
+        </div>
+        <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12px] text-muted">
+          {bars.map(([l, v, col]) => <span key={l} className="flex items-center gap-1.5"><i className="inline-block h-2 w-2 rounded-full" style={{ background: col }} />{l} <b className="num text-ink">{pct(v)}</b></span>)}
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Slider id="mix-bio" label={<span>Biocarburants (B100, HVO100, Bio-GNC)</span>} value={st.mix.bio} onChange={v => setMix('bio', v)} display={pct(st.mix.bio)} />
+          <Slider id="mix-elec" label="Électrique / Hydrogène" value={st.mix.elec} onChange={v => setMix('elec', v)} display={pct(st.mix.elec)} />
+        </div>
+        <p className="text-[12px] text-muted">La part gazole B7 ({pct(r.diesel)}) se calcule automatiquement. Les biocarburants sont valorisés au coût du B100.</p>
+        <label className="flex items-start gap-2.5 text-[13px]">
+          <input id="pos" type="checkbox" className="mt-0.5" checked={st.pos} onChange={e => set(s => ({ ...s, pos: e.target.checked }))} />
+          <span>Biocarburants certifiés <Term k="red">RED II / III</Term> avec <Term k="pos">PoS</Term> valide. <span className="text-muted">Décoché, ils sont taxés comme du fossile.</span></span>
+        </label>
+      </Panel>
+
+      <Panel eyebrow="Finances" title="Données financières" right={<span className="text-[12px] text-muted">Valeurs par défaut modifiables</span>}>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <NumField id="ca" label="Chiffre d'affaires de l'activité flotte" value={st.fin.ca} onChange={v => set(s => ({ ...s, fin: { ...s.fin, ca: v } }))} suffix="€" />
+          <NumField id="margin" label="Marge EBITDA actuelle" value={st.fin.margin} onChange={v => set(s => ({ ...s, fin: { ...s.fin, margin: v } }))} suffix="%" max={100} />
+        </div>
+        <Slider id="alpha" label={<span>Taux de répercussion client <Term k="alpha">α</Term></span>} value={st.fin.alpha}
+          onChange={v => set(s => ({ ...s, fin: { ...s.fin, alpha: v } }))} display={pct(st.fin.alpha)}
+          hint={`Vous absorbez ${pct(100 - st.fin.alpha)} du surcoût carbone.`} />
+      </Panel>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Kpi icon="Fuel" label="Carburant liquide" value={`${num(r.now.liquidVolume)} L`} sub="Volume annuel, toutes énergies liquides" />
+        <Kpi icon="Factory" label={<Term k="ttw">Émissions TTW</Term>} value={`${num(r.now.co2, 0)} tCO2`} sub="Assujetties à l'ETS 2 par an" />
+        <Kpi icon="Leaf" label="Part renouvelable" value={pct(r.clean)} sub={st.pos ? 'Certifiée RED II / III' : 'PoS non valide : 0 % retenu pour les biocarburants'} />
+      </div>
+    </div>
+  );
+}
+
+function StepMarket({ st, set, r }) {
+  const setM = patch => set(s => ({ ...s, market: { ...s.market, ...patch } }));
+  const setPrice = (k, v) => set(s => ({ ...s, market: { ...s.market, prices: { ...s.market.prices, [k]: v } } }));
+  const P = st.market.price;
+  const rows = [['Gazole B7', FE.diesel, 'L'], ['Essence SP95 / SP98', FE.essence, 'L'], ['GNC / GNL fossile', FE.gnc, 'kg'], ['Biocarburant certifié', 0, 'L ou kg']];
+  const cols = [...SCENARIOS.map(s => s.price), ...(SCENARIOS.some(s => s.price === P) ? [] : [P])];
+  return (
+    <div className="flex flex-col gap-4">
+      <Panel eyebrow="Marché carbone" title={<span>Prix du quota <Term k="eua2">EUA2</Term></span>}>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {SCENARIOS.map(s => {
+            const on = P === s.price;
+            return (
+              <motion.button key={s.price} whileTap={{ scale: .98 }} onClick={() => setM({ price: s.price })} aria-pressed={on}
+                className="text-left rounded-lg border p-4 flex flex-col gap-1 transition-colors"
+                style={{ borderColor: on ? 'var(--navy)' : 'var(--line)', background: on ? 'var(--navy-soft)' : 'var(--surface)', boxShadow: on ? 'inset 0 0 0 1px var(--navy)' : 'none' }}>
+                <span className="eyebrow">{s.label} · {s.term ? <Term k={s.term}>{s.sub}</Term> : s.sub}</span>
+                <span className="num text-[26px] font-semibold leading-tight">{s.price} €<span className="text-[14px] text-muted">/tCO2</span></span>
+                <span className="num text-[13px] text-muted">+{nf(2).format(surcoutLitre(FE.diesel, s.price))} € HT par litre de gazole</span>
+              </motion.button>
+            );
+          })}
+        </div>
+        <Slider id="price" label="Prix personnalisé" min={30} max={150} value={P} onChange={v => setM({ price: v })}
+          display={`${P} €/tCO2 · +${nf(3).format(surcoutLitre(FE.diesel, P))} €/L`} />
+      </Panel>
+
+      <Panel eyebrow={<span>Facteurs <Term k="mrr">MRR</Term> 2018/2066</span>} title="Surcoût HT à la pompe">
+        <div className="scroll-x -mx-1">
+          <table className="w-full min-w-[520px] text-[13px]">
+            <thead><tr className="text-left text-muted border-b border-line">
+              <th className="py-2 px-1 font-medium">Énergie</th><th className="py-2 px-1 font-medium">Facteur</th>
+              {cols.map(c => <th key={c} className={`py-2 px-1 font-medium text-right ${c === P ? 'text-navy' : ''}`}>{c} €/t</th>)}
+            </tr></thead>
+            <tbody>{rows.map(([l, fe, u]) => (
+              <tr key={l} className="border-b border-line last:border-0">
+                <td className="py-2 px-1">{l === 'Biocarburant certifié' ? <Term k="zero">{l}</Term> : l}</td>
+                <td className="py-2 px-1 num text-muted">{fe ? `${nf(2).format(fe * 1000)} kg/${u}` : '0'}</td>
+                {cols.map(c => <td key={c} className={`py-2 px-1 num text-right ${c === P ? 'font-semibold' : ''}`}>{fe ? `+${nf(3).format(fe * c)} €/${u}` : <span className="text-emink">Exempté</span>}</td>)}
+              </tr>))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+        <Panel eyebrow="Hypothèses" title="Prix des énergies hors ETS 2">
+          <div className="grid grid-cols-2 gap-3">
+            <NumField id="p-b7" label="Gazole B7" value={st.market.prices.b7} onChange={v => setPrice('b7', v)} suffix="€ HT/L" />
+            <NumField id="p-b100" label="B100" value={st.market.prices.b100} onChange={v => setPrice('b100', v)} suffix="€ HT/L" />
+            <NumField id="p-gnc" label="Bio-GNC" value={st.market.prices.gnc} onChange={v => setPrice('gnc', v)} suffix="€ HT/kg" />
+            <NumField id="p-bev" label="Électricité" value={st.market.prices.bev} onChange={v => setPrice('bev', v)} suffix="€ HT/kWh" />
+          </div>
+        </Panel>
+        <Panel eyebrow="Calendrier" title="Année de simulation">
+          <Seg id="year" value={st.market.year} onChange={v => setM({ year: v })} options={[2027, 2028, 2030].map(y => ({ v: y, label: String(y) }))} />
+          <p className="text-[13px] text-muted">
+            {st.market.year === 2027 && "Lancement des enchères EUA2. Report à 2028 possible (art. 30k) en cas de crise des prix de l'énergie. Première restitution en mai 2028."}
+            {st.market.year === 2028 && "Démarrage en cas de report. Première restitution des quotas en mai 2029."}
+            {st.market.year === 2030 && "Cible Fit for 55 : −42 % d'émissions sur le transport routier vs 2005. Plafond en baisse de 4,4 % par an, prix plus tendus."}
+          </p>
+        </Panel>
+      </div>
+    </div>
+  );
+}
+
+function ChartShell({ height = 280, children }) {
+  if (!RC.ResponsiveContainer) return <p className="text-[13px] text-crit">Le module de graphiques n'a pas pu se charger (connexion requise).</p>;
+  return <div style={{ width: '100%', height }}><RC.ResponsiveContainer>{children}</RC.ResponsiveContainer></div>;
+}
+const ChartTip = ({ active, payload, label }) => {
+  if (!active || !payload || !payload.length) return null;
+  const total = payload.reduce((a, p) => a + (p.value || 0), 0);
+  return (
+    <div className="rounded-md border border-line bg-surface px-3 py-2 text-[12px]" style={{ boxShadow: 'var(--shadow)' }}>
+      <div className="font-semibold mb-1">{label}</div>
+      {payload.map(p => <div key={p.dataKey} className="flex justify-between gap-4"><span style={{ color: p.color }}>{p.name}</span><span className="num">{eur(p.value)}</span></div>)}
+      <div className="flex justify-between gap-4 border-t border-line mt-1 pt-1 font-semibold"><span>Total</span><span className="num">{eur(total)}</span></div>
+    </div>
+  );
+};
+
+function StepResults({ st, r }) {
+  const t = useTokens();
+  const axis = { stroke: t.line, tick: { fill: t.muted, fontSize: 12 } };
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Kpi icon="Euro" label="Surcoût ETS 2 brut annuel" value={<Tween value={r.now.ets} fmt={v => keur(v)} />} sub={`${num(r.now.fossilVolume)} L fossiles × ${nf(2).format(FE.diesel * 1000)} kg/L × ${r.p.price} €/t`} />
+        <Kpi icon="Gauge" label="Surcoût moyen au kilomètre" value={<Tween value={r.cKmAvg} fmt={v => `${nf(3).format(v)} €/km`} />} sub={`Sur ${num(r.now.km)} km/an`} />
+        <Kpi icon="TrendingDown" label="Impact marge EBITDA" tone="var(--crit)" value={<Tween value={-r.ebNow.loss} fmt={v => eur(v)} />}
+          sub={`${nf(1).format(-r.ebNow.pctEbitda)} % d'EBITDA · ${nf(2).format(-r.ebNow.pts)} pt de marge (α = ${st.fin.alpha} %)`} />
+        <div className="rounded-lg border border-line bg-surface p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-muted"><Icon name="ShieldCheck" size={15} /><span className="eyebrow">Score de vulnérabilité ETS 2</span></div>
+          <ClassBadge pctClean={r.clean} />
+          <span className="num text-[12px] text-muted">Exposition : {eur(r.cKmAvg * 100000)} / 100 000 km</span>
+        </div>
+      </div>
+
+      <Panel eyebrow="Scénarios" title="Facture énergie annuelle avec et sans ETS 2">
+        <ChartShell>
+          <RC.BarChart data={r.chart1} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+            <RC.CartesianGrid vertical={false} stroke={t.line} />
+            <RC.XAxis dataKey="name" {...axis} tickLine={false} />
+            <RC.YAxis {...axis} tickLine={false} axisLine={false} width={56} tickFormatter={v => keur(v, 0)} />
+            <RC.Tooltip content={<ChartTip />} cursor={{ fill: t.line, opacity: .35 }} />
+            <RC.Legend wrapperStyle={{ fontSize: 12, color: t.muted }} />
+            <RC.Bar dataKey="base" name="Énergie hors ETS 2" stackId="a" fill={t.slateLight} />
+            <RC.Bar dataKey="ets" name="Surcoût ETS 2" stackId="a" radius={[4, 4, 0, 0]}>
+              {r.chart1.map(d => <RC.Cell key={d.name} fill={d.current ? t.crit : t.navy} />)}
+            </RC.Bar>
+          </RC.BarChart>
+        </ChartShell>
+        <p className="text-[12px] text-muted">Barre rouge : scénario retenu ({r.p.price} €/t). Mix actuel, sans levier d'optimisation.</p>
+      </Panel>
+
+      <Panel eyebrow="Détail" title="Exposition par catégorie">
+        <div className="scroll-x -mx-1">
+          <table className="w-full min-w-[480px] text-[13px]">
+            <thead><tr className="text-left text-muted border-b border-line">
+              <th className="py-2 px-1 font-medium">Catégorie</th><th className="py-2 px-1 font-medium text-right">Véhicules</th>
+              <th className="py-2 px-1 font-medium text-right">€/km</th><th className="py-2 px-1 font-medium text-right">€/véhicule/an</th><th className="py-2 px-1 font-medium text-right">Total</th>
+            </tr></thead>
+            <tbody>{CATS.filter(c => st.fleet[c.id].count > 0).map(c => {
+              const b = r.now.byCat[c.id], n = st.fleet[c.id].count;
+              return <tr key={c.id} className="border-b border-line last:border-0">
+                <td className="py-2 px-1">{c.label}</td><td className="py-2 px-1 num text-right">{n}</td>
+                <td className="py-2 px-1 num text-right">{nf(4).format(b.km ? b.ets / b.km : 0)}</td>
+                <td className="py-2 px-1 num text-right">{eur(b.ets / n)}</td><td className="py-2 px-1 num text-right font-semibold">{eur(b.ets)}</td></tr>;
+            })}</tbody>
+          </table>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function StepLevers({ st, set, r }) {
+  const t = useTokens();
+  const setL = patch => set(s => ({ ...s, levers: { ...s.levers, ...patch } }));
+  const S = r.savings;
+  const convVeh = r.now.vehicles * (r.cur.b7 - r.optS.b7);
+  const chart2 = [
+    { name: 'Actuel + ETS 2', loyer: r.now.loyer, energy: r.now.energy, maint: r.now.maint, ets: r.now.ets },
+    { name: 'Flexy Green + Katalii', loyer: r.opt.loyer, energy: r.opt.energy, maint: r.opt.maint, ets: r.opt.ets },
+  ];
+  const axis = { stroke: t.line, tick: { fill: t.muted, fontSize: 12 } };
+  const line = (label, v, strong) => (
+    <div className={`flex justify-between gap-3 py-1.5 ${strong ? 'border-t border-line mt-1 pt-2.5 font-semibold' : ''}`}>
+      <span className={strong ? '' : 'text-muted'}>{label}</span>
+      <span className="num" style={{ color: v > 0.5 ? 'var(--emerald-ink)' : v < -0.5 ? 'var(--crit)' : 'var(--muted)' }}>{v > 0.5 ? '+' : ''}{eur(v)}</span>
+    </div>
+  );
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Panel eyebrow="Levier 1 · Offre Flexy Green" title="Basculer une partie du gazole">
+          <Seg id="target" value={st.levers.target} onChange={v => setL({ target: v })}
+            options={[{ v: 'b100', label: 'B100' }, { v: 'gnc', label: 'Bio-GNC' }, { v: 'bev', label: 'Électrique' }]} />
+          <Slider id="conv" label="Part de la flotte gazole convertie" value={st.levers.conv} onChange={v => setL({ conv: v })}
+            display={pct(st.levers.conv)} hint={`≈ ${nf(1).format(convVeh)} véhicule(s) sur ${num(r.now.vehicles * r.cur.b7, 1)} au gazole`} />
+          <div className="rounded-lg bg-emsoft px-4 py-3 flex items-center justify-between gap-3">
+            <span className="text-[13px] text-emink font-medium">Taxe ETS 2 évitée</span>
+            <span className="num text-[20px] font-semibold text-emink"><Tween value={S.etsConv} fmt={v => eur(v)} /></span>
+          </div>
+          {!st.pos && st.levers.target !== 'bev' && <p className="text-[12px] text-warn flex gap-1.5"><Icon name="AlertTriangle" size={14} />Sans PoS valide, le biocarburant reste taxé : aucune économie ETS 2.</p>}
+        </Panel>
+
+        <Panel eyebrow="Levier 2 · Katalii PILOT'ING" title="Optimisation des tournées et éco-conduite">
+          <label className="flex items-center gap-2.5 text-[13px] font-medium">
+            <input id="katalii" type="checkbox" checked={st.levers.katalii} onChange={e => setL({ katalii: e.target.checked })} />
+            Activer l'optimisation Katalii
+          </label>
+          <div className={`grid gap-4 sm:grid-cols-2 transition-opacity ${st.levers.katalii ? '' : 'opacity-50'}`}>
+            <Slider id="kmcut" label="Kilomètres évités" min={15} max={20} value={st.levers.kmCut} onChange={v => setL({ kmCut: v })} display={`−${st.levers.kmCut} %`} />
+            <Slider id="consocut" label="Consommation (éco-conduite)" min={5} max={8} value={st.levers.consoCut} onChange={v => setL({ consoCut: v })} display={`−${st.levers.consoCut} %`} />
+          </div>
+          <div className="rounded-lg bg-emsoft px-4 py-3 flex items-center justify-between gap-3">
+            <span className="text-[13px] text-emink font-medium">Carburant + ETS 2 économisés</span>
+            <span className="num text-[20px] font-semibold text-emink"><Tween value={S.energyKat + S.etsKat} fmt={v => eur(v)} /></span>
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
+        <Panel eyebrow="TCO flotte annuel" title="Situation actuelle vs flotte optimisée">
+          <ChartShell height={300}>
+            <RC.BarChart data={chart2} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+              <RC.CartesianGrid vertical={false} stroke={t.line} />
+              <RC.XAxis dataKey="name" {...axis} tickLine={false} />
+              <RC.YAxis {...axis} tickLine={false} axisLine={false} width={56} tickFormatter={v => keur(v, 0)} />
+              <RC.Tooltip content={<ChartTip />} cursor={{ fill: t.line, opacity: .35 }} />
+              <RC.Legend wrapperStyle={{ fontSize: 12 }} />
+              <RC.Bar dataKey="loyer" name="Loyer LLD" stackId="t" fill={t.navy} />
+              <RC.Bar dataKey="energy" name="Énergie hors ETS 2" stackId="t" fill={t.slate} />
+              <RC.Bar dataKey="maint" name="Maintenance" stackId="t" fill={t.slateLight} />
+              <RC.Bar dataKey="ets" name="Taxe ETS 2" stackId="t" fill={t.crit} radius={[4, 4, 0, 0]} />
+            </RC.BarChart>
+          </ChartShell>
+        </Panel>
+        <Panel eyebrow="Bilan annuel" title="Économies cumulées">
+          <div className="text-[13px]">
+            {line('ETS 2 évitée · conversion', S.etsConv)}
+            {line('ETS 2 évitée · Katalii', S.etsKat)}
+            {line('Énergie · conversion', S.energyConv)}
+            {line('Carburant économisé · Katalii', S.energyKat)}
+            {line('Loyer et maintenance', S.rentMaint)}
+            {line('Gain TCO net', S.total, true)}
+          </div>
+          <div className="flex items-center gap-3 pt-1">
+            <ClassBadge pctClean={r.clean} size="sm" /><Icon name="ArrowRight" className="text-muted" /><ClassBadge pctClean={r.cleanOpt} size="sm" />
+            <span className="text-[12px] text-muted">Classe ETS 2 avant / après</span>
+          </div>
+          <p className="text-[12px] text-muted">Perte EBITDA ramenée de {eur(r.ebNow.loss)} à {eur(r.ebOpt.loss)}.</p>
+        </Panel>
+      </div>
+
+      <TcoTable st={st} set={set} />
+    </div>
+  );
+}
+
+function TcoTable({ st, set }) {
+  const catId = st.tcoCat;
+  const rows = useMemo(() => tcoTable(catId, st), [catId, st]);
+  const best = Math.min(...rows.map(c => c.total));
+  const cat = CATS.find(c => c.id === catId), fr = st.fleet[catId];
+  const R = (label, f, cls = '') => (
+    <tr className={`border-b border-line ${cls}`}><th scope="row" className="py-2 px-2 text-left font-medium text-muted">{label}</th>
+      {rows.map(c => <td key={c.k} className="py-2 px-2 num text-right">{f(c)}</td>)}</tr>
+  );
+  return (
+    <Panel eyebrow="Comparatif TCO par véhicule" title={`${cat.label} · ${num(fr.km)} km/an · ${st.market.price} €/t`}
+      right={<Seg id="tcocat" value={catId} onChange={v => set(s => ({ ...s, tcoCat: v }))} options={CATS.map(c => ({ v: c.id, label: c.short }))} />}>
+      <div className="scroll-x -mx-1">
+        <table className="w-full min-w-[560px] text-[13px]">
+          <thead><tr className="border-b border-line"><th className="py-2 px-2" />
+            {rows.map(c => <th key={c.k} className="py-2 px-2 text-right font-semibold">{ENERGIES[c.k].label}
+              <div className="num text-[11px] font-normal text-muted">{nf(c.k === 'bev' ? 0 : 1).format(conso100(cat, fr, c.k))} {ENERGIES[c.k].unit}/100 km</div></th>)}</tr></thead>
+          <tbody>
+            {R('Loyer LLD', c => eur(c.loyer))}
+            {R('Énergie hors ETS 2', c => eur(c.energy))}
+            {R('Taxe ETS 2', c => c.ets ? eur(c.ets) : <span className="text-emink">0 €</span>)}
+            {R('Maintenance', c => eur(c.maint))}
+            <tr className="border-b border-line"><th scope="row" className="py-2.5 px-2 text-left font-semibold">TCO annuel</th>
+              {rows.map(c => <td key={c.k} className="py-2.5 px-2 num text-right font-semibold" style={c.total === best ? { color: 'var(--emerald-ink)' } : undefined}>{eur(c.total)}</td>)}</tr>
+            {R('Écart vs gazole', c => c.k === 'b7' ? '—' : <span style={{ color: c.delta < 0 ? 'var(--emerald-ink)' : 'var(--crit)' }}>{c.delta > 0 ? '+' : ''}{eur(c.delta)}</span>)}
+            {R('Coût au km', c => `${nf(3).format(c.perKm)} €`)}
+            {R(<span>Prix <Term k="eua2">EUA2</Term> d'équilibre</span>, c => c.breakEven == null ? '—' : isNaN(c.breakEven) ? 'n.d.' : c.breakEven === 0 ? <span className="text-emink">Déjà compétitif</span> : c.breakEven > 400 ? '> 400 €/t' : `${num(c.breakEven)} €/t`, 'border-0')}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[12px] text-muted">Loyers et coûts de maintenance indicatifs, à remplacer par la grille tarifaire réelle. Le prix d'équilibre est le prix du quota à partir duquel l'énergie alternative devient moins chère que le gazole.</p>
+    </Panel>
+  );
+}
+
+/* ============================================================
+   5. RAPPORT SYNTHÉTIQUE
+   ============================================================ */
+function reportText(st, r) {
+  const d = new Date().toLocaleDateString('fr-FR');
+  const L = [
+    `RAPPORT D'EXPOSITION EU ETS 2 — FLOTTE (${d})`, '',
+    'HYPOTHÈSES',
+    ...CATS.filter(c => st.fleet[c.id].count).map(c => `- ${c.label} : ${st.fleet[c.id].count} véh., ${num(st.fleet[c.id].km)} km/an, ${st.fleet[c.id].conso} L/100 km`),
+    `- Mix : gazole ${pct(r.diesel)}, biocarburants ${pct(st.mix.bio)}, électrique ${pct(st.mix.elec)} (PoS ${st.pos ? 'valide' : 'non valide'})`,
+    `- Prix EUA2 : ${st.market.price} €/tCO2 (année ${st.market.year}) · α = ${st.fin.alpha} %`, '',
+    'RÉSULTATS',
+    `- Émissions TTW assujetties : ${num(r.now.co2, 1)} tCO2/an`,
+    `- Surcoût ETS 2 brut : ${eur(r.now.ets)}/an · ${nf(3).format(r.cKmAvg)} €/km`,
+    `- Perte EBITDA : ${eur(r.ebNow.loss)} (${nf(1).format(r.ebNow.pctEbitda)} % de l'EBITDA, ${nf(2).format(r.ebNow.pts)} pt de marge)`,
+    `- Classe ETS 2 : ${classOf(r.clean).id} (${pct(r.clean)} d'énergies alternatives)`, '',
+    'SCÉNARIOS',
+    ...r.chart1.filter(x => x.price).map(x => `- ${x.name} : ${eur(x.ets)}/an`), '',
+    'LEVIERS',
+    `- Flexy Green : ${pct(st.levers.conv)} du gazole vers ${ENERGIES[st.levers.target].label} → ETS 2 évitée ${eur(r.savings.etsConv)}`,
+    `- Katalii : ${st.levers.katalii ? `−${st.levers.kmCut} % km, −${st.levers.consoCut} % conso → ${eur(r.savings.energyKat + r.savings.etsKat)}` : 'non activé'}`,
+    `- Gain TCO net : ${eur(r.savings.total)}/an · classe ${classOf(r.clean).id} → ${classOf(r.cleanOpt).id}`, '',
+    'MÉTHODE : facteurs MRR (UE) 2018/2066, périmètre tank-to-wheel (ETS 2). Biocarburants certifiés RED II/III à facteur nul.',
+    "Base de travail pour un reporting CSRD (ESRS E1) ; un bilan ISO 14083 requiert en plus les émissions amont (WTW). Estimation non vérifiée.",
+  ];
+  return L.join('\n');
+}
+
+function Report({ st, r, onClose }) {
+  const [copied, setCopied] = useState('');
+  const standalone = window.self === window.top;
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(reportText(st, r)); setCopied('Rapport copié'); }
+    catch { setCopied('Copie refusée : sélectionnez le texte manuellement'); }
+  };
+  const download = () => {
+    const html = `<!doctype html><meta charset="utf-8"><title>Rapport ETS 2</title><pre style="font:13px/1.6 Consolas,monospace;padding:24px;white-space:pre-wrap">${reportText(st, r).replace(/</g, '&lt;')}</pre>`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = `rapport-ets2-${new Date().toISOString().slice(0, 10)}.html`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  useEffect(() => { const k = e => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k); }, []);
+  const Row = ({ l, v }) => <div className="flex justify-between gap-4 py-1.5 border-b border-line"><span className="text-muted">{l}</span><span className="num text-right">{v}</span></div>;
+  return (
+    <motion.div className="fixed inset-0 z-40 grid place-items-center p-4" style={{ background: 'rgba(8,14,28,.55)' }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+      <motion.div id="report" role="dialog" aria-modal="true" aria-labelledby="rep-title" onClick={e => e.stopPropagation()}
+        initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 16, opacity: 0 }}
+        className="w-full max-w-[760px] max-h-[88vh] overflow-y-auto rounded-xl bg-surface border border-line p-5 sm:p-7 flex flex-col gap-5 text-[13px]">
+        <header className="flex items-start justify-between gap-4">
+          <div><div className="eyebrow">Rapport synthétique · {new Date().toLocaleDateString('fr-FR')}</div>
+            <h2 id="rep-title" className="font-display text-[22px] font-bold">Exposition EU ETS 2 de la flotte</h2></div>
+          <button onClick={onClose} className="no-print p-1.5 rounded-md hover:bg-surface2" aria-label="Fermer"><Icon name="X" size={18} /></button>
+        </header>
+        <div className="flex flex-wrap items-center gap-6">
+          <ClassBadge pctClean={r.clean} />
+          <div><div className="eyebrow">Surcoût ETS 2 brut</div><div className="num text-[22px] font-semibold">{eur(r.now.ets)}<span className="text-[13px] text-muted"> /an</span></div></div>
+          <div><div className="eyebrow">Gain TCO avec leviers</div><div className="num text-[22px] font-semibold text-emink">{eur(r.savings.total)}<span className="text-[13px] text-muted"> /an</span></div></div>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div><h3 className="font-semibold mb-1">Hypothèses</h3>
+            {CATS.filter(c => st.fleet[c.id].count).map(c => <Row key={c.id} l={c.label} v={`${st.fleet[c.id].count} × ${num(st.fleet[c.id].km)} km · ${st.fleet[c.id].conso} L`} />)}
+            <Row l="Mix gazole / bio / élec." v={`${r.diesel} / ${st.mix.bio} / ${st.mix.elec} %`} />
+            <Row l="Prix EUA2 · année" v={`${st.market.price} €/t · ${st.market.year}`} />
+            <Row l="Répercussion α" v={pct(st.fin.alpha)} />
+          </div>
+          <div><h3 className="font-semibold mb-1">Résultats</h3>
+            <Row l="Émissions TTW assujetties" v={`${num(r.now.co2, 1)} tCO2`} />
+            <Row l="Surcoût moyen" v={`${nf(3).format(r.cKmAvg)} €/km`} />
+            <Row l="Perte EBITDA" v={`${eur(r.ebNow.loss)} · ${nf(1).format(r.ebNow.pctEbitda)} %`} />
+            {r.chart1.filter(x => x.price).map(x => <Row key={x.name} l={`Scénario ${x.name}`} v={eur(x.ets)} />)}
+          </div>
+        </div>
+        <div><h3 className="font-semibold mb-1">Leviers simulés</h3>
+          <Row l={`Flexy Green : ${st.levers.conv} % du gazole vers ${ENERGIES[st.levers.target].label}`} v={`${eur(r.savings.etsConv)} d'ETS 2 évitée`} />
+          <Row l={`Katalii ${st.levers.katalii ? `(−${st.levers.kmCut} % km, −${st.levers.consoCut} % conso)` : '(non activé)'}`} v={eur(r.savings.energyKat + r.savings.etsKat)} />
+          <Row l="Classe ETS 2 après leviers" v={`${classOf(r.clean).id} → ${classOf(r.cleanOpt).id}`} />
+        </div>
+        <p className="text-[12px] text-muted">Méthode : facteurs d'émission par défaut du règlement MRR (UE) 2018/2066, périmètre tank-to-wheel retenu par l'ETS 2, biocarburants certifiés RED II / III à facteur nul. Ce rapport sert de base à un reporting <Term k="csrd">CSRD</Term> (ESRS E1). Un bilan <Term k="iso">ISO 14083</Term> demande en plus les émissions amont (WTW). Estimation non vérifiée par un tiers.</p>
+        <div className="no-print flex flex-wrap items-center gap-2">
+          <button onClick={copy} className="inline-flex items-center gap-2 rounded-md bg-navy px-3.5 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="Copy" size={15} />Copier le rapport</button>
+          {standalone && <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-2 text-[13px] font-semibold"><Icon name="Printer" size={15} />Imprimer / PDF</button>}
+          {standalone && <button onClick={download} className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-2 text-[13px] font-semibold"><Icon name="Download" size={15} />Télécharger (.html)</button>}
+          {copied && <span className="text-[12px] text-muted" role="status">{copied}</span>}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ============================================================
+   6. APPLICATION
+   ============================================================ */
+const defaultState = () => ({
+  step: 0, tcoCat: 'p19', pos: true,
+  fleet: { lcv: { count: 0, km: 25000, conso: 9 }, p19: { count: 10, km: 60000, conso: 28 }, t44: { count: 5, km: 100000, conso: 32 } },
+  mix: { bio: 0, elec: 0 },
+  fin: { ca: 2500000, margin: 5, alpha: 80 },
+  market: { price: 60, year: 2027, prices: { b7: 1.50, b100: 1.40, gnc: 1.45, bev: 0.22 } },
+  levers: { conv: 30, target: 'b100', katalii: true, kmCut: 15, consoCut: 5 },
+});
+
+const STEPS = [
+  { t: 'Flotte', d: 'Parc, mix, finances', icon: 'Truck' },
+  { t: 'Prix carbone', d: 'Scénarios EUA2', icon: 'BarChart3' },
+  { t: 'Impact', d: 'Coût et vulnérabilité', icon: 'Gauge' },
+  { t: 'Leviers', d: 'Flexy Green · Katalii', icon: 'Leaf' },
+];
+
+function Rail({ st, r, openReport }) {
+  const c = classOf(r.clean);
+  return (
+    <aside className="lg:sticky lg:top-4 flex flex-col gap-3 self-start">
+      <div className="rounded-xl border border-line bg-surface p-4 flex flex-col gap-3" style={{ boxShadow: 'var(--shadow)' }}>
+        <div className="flex items-center justify-between"><span className="eyebrow">Synthèse en direct</span>
+          <span className="num rounded-full bg-navysoft px-2 py-0.5 text-[12px] font-semibold text-navy">{st.market.price} €/t</span></div>
+        <div><div className="text-[12px] text-muted">Surcoût ETS 2 brut</div>
+          <div className="num text-[30px] font-semibold leading-tight"><Tween value={r.now.ets} fmt={v => keur(v)} /><span className="text-[13px] text-muted font-normal"> /an</span></div></div>
+        <div className="grid grid-cols-2 gap-3 text-[12px]">
+          <div><div className="text-muted">Par kilomètre</div><div className="num text-[15px] font-semibold"><Tween value={r.cKmAvg} fmt={v => `${nf(3).format(v)} €`} /></div></div>
+          <div><div className="text-muted">Perte EBITDA</div><div className="num text-[15px] font-semibold text-crit"><Tween value={-r.ebNow.pctEbitda} fmt={v => `${nf(1).format(v)} %`} /></div></div>
+        </div>
+        <div className="border-t border-line pt-3"><ClassBadge pctClean={r.clean} /></div>
+        <div className="rounded-lg bg-emsoft p-3">
+          <div className="text-[12px] text-emink">Avec Flexy Green + Katalii</div>
+          <div className="num text-[18px] font-semibold text-emink"><Tween value={r.savings.total} fmt={v => `${v >= 0 ? '−' : '+'}${eur(Math.abs(v))}`} /> <span className="text-[12px] font-normal">de TCO /an</span></div>
+          <div className="text-[12px] text-emink">Classe {c.id} → {classOf(r.cleanOpt).id}</div>
+        </div>
+        <button onClick={openReport} className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
+          <Icon name="FileText" size={15} />Télécharger le rapport synthétique</button>
+      </div>
+      <p className="text-[12px] text-muted px-1">Données d'exemple : PME de 10 porteurs et 5 tracteurs. Remplacez-les par votre flotte à l'étape 1.</p>
+    </aside>
+  );
+}
+
+/* ============================================================
+   7. VERSION ALLÉGÉE & ACCÈS À LA VERSION DÉTAILLÉE
+   ============================================================ */
+function LightCalc({ st, set, r, unlocked, onDetailed }) {
+  const setCount = (id, v) => set(s => ({ ...s, fleet: { ...s.fleet, [id]: { ...s.fleet[id], count: Math.round(v) } } }));
+  const alt = st.mix.bio + st.mix.elec;
+  const setAlt = v => set(s => { const elec = Math.min(s.mix.elec, v); return { ...s, mix: { bio: v - elec, elec } }; });
+  const perVeh = r.now.vehicles ? r.now.ets / r.now.vehicles : 0;
+  return (
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <Panel eyebrow="Votre flotte" title="Trois réglages pour un ordre de grandeur">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {CATS.map(c => (
+            <div key={c.id} className="flex flex-col gap-1">
+              <NumField id={`l-${c.id}`} label={c.label} value={st.fleet[c.id].count} onChange={v => setCount(c.id, v)} suffix="véh." />
+              <span className="num text-[11px] text-muted">{num(st.fleet[c.id].km)} km/an · {st.fleet[c.id].conso} L/100 km</span>
+            </div>
+          ))}
+        </div>
+        <Slider id="l-alt" label="Part déjà en biocarburants ou en électrique" value={alt} onChange={setAlt} display={pct(alt)} />
+        <div className="flex flex-col gap-2">
+          <span id="l-price" className="text-[13px]">Prix du quota carbone <Term k="eua2">EUA2</Term></span>
+          <Seg id="l-price" value={st.market.price} onChange={v => set(s => ({ ...s, market: { ...s.market, price: v } }))}
+            options={SCENARIOS.map(s => ({ v: s.price, label: `${s.price} €/t · ${s.label}` }))} />
+        </div>
+        <p className="text-[12px] text-muted">Kilométrages et consommations types d'une flotte de transport. Vous pourrez les ajuster dans la version détaillée.</p>
+      </Panel>
+
+      <aside className="rounded-xl border border-line bg-surface p-5 flex flex-col gap-4 self-start" style={{ boxShadow: 'var(--shadow)' }}>
+        <div className="flex items-center justify-between"><span className="eyebrow">Votre résultat</span>
+          <span className="num rounded-full bg-navysoft px-2 py-0.5 text-[12px] font-semibold text-navy">{st.market.price} €/t</span></div>
+        <div><div className="text-[13px] text-muted">Surcoût <Term k="ets2">ETS 2</Term> par an</div>
+          <div className="num text-[38px] font-semibold leading-tight"><Tween value={r.now.ets} fmt={v => eur(v)} /></div></div>
+        <div className="grid grid-cols-2 gap-3 text-[12px]">
+          <div><div className="text-muted">Par véhicule et par an</div><div className="num text-[16px] font-semibold"><Tween value={perVeh} fmt={v => eur(v)} /></div></div>
+          <div><div className="text-muted">Par kilomètre</div><div className="num text-[16px] font-semibold"><Tween value={r.cKmAvg} fmt={v => `${nf(3).format(v)} €`} /></div></div>
+        </div>
+        <div className="border-t border-line pt-4"><ClassBadge pctClean={r.clean} /></div>
+        <div className="rounded-lg bg-surface2 p-4 flex flex-col gap-3">
+          <p className="text-[13px]">La version détaillée chiffre l'impact sur votre marge, les économies Flexy Green et Katalii, le TCO par énergie, et produit un rapport.</p>
+          <button onClick={onDetailed} className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
+            <Icon name={unlocked ? 'ArrowRight' : 'Lock'} size={15} />Accéder à la version détaillée</button>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+const REGIONS = ['Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France',
+  'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur", 'Hors de France'];
+const FLEET_SIZES = ['Moins de 10 véhicules', '10 à 49 véhicules', '50 à 199 véhicules', '200 véhicules et plus'];
+
+// Aucun stockage pour l'instant : brancher ici l'envoi du contact (fonction serverless, CRM…).
+const submitLead = async lead => lead;
+
+function LeadGate({ onUnlock, onBack }) {
+  const [f, setF] = useState({ prenom: '', nom: '', societe: '', fonction: '', email: '', tel: '', flotte: '', region: '', consent: false });
+  const [err, setErr] = useState({});
+  const up = k => e => setF(s => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+  const submit = async e => {
+    e.preventDefault();
+    const x = {};
+    for (const k of ['prenom', 'nom', 'societe', 'fonction', 'flotte', 'region']) if (!f[k].trim()) x[k] = 'Champ obligatoire';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.trim())) x.email = 'Saisissez une adresse e-mail valide, par exemple nom@societe.fr';
+    if (f.tel && !/^[+\d][\d\s.-]{7,}$/.test(f.tel.trim())) x.tel = 'Numéro invalide';
+    if (!f.consent) x.consent = 'Cochez cette case pour continuer';
+    setErr(x);
+    if (Object.keys(x).length) { document.getElementById(`g-${Object.keys(x)[0]}`)?.focus(); return; }
+    await submitLead(f);
+    onUnlock();
+  };
+  const field = (k, label, props = {}) => (
+    <label htmlFor={`g-${k}`} className="flex flex-col gap-1 min-w-0">
+      <span className="text-[12px] text-muted">{label}</span>
+      <input id={`g-${k}`} value={f[k]} onChange={up(k)} aria-invalid={!!err[k]} {...props}
+        className="rounded-md border bg-surface px-2.5 py-1.5 text-[14px] text-ink outline-none focus:border-navy" style={{ borderColor: err[k] ? 'var(--crit)' : 'var(--line)' }} />
+      {err[k] && <span className="text-[12px] text-crit">{err[k]}</span>}
+    </label>
+  );
+  const select = (k, label, opts) => (
+    <label htmlFor={`g-${k}`} className="flex flex-col gap-1 min-w-0">
+      <span className="text-[12px] text-muted">{label}</span>
+      <select id={`g-${k}`} value={f[k]} onChange={up(k)} aria-invalid={!!err[k]}
+        className="rounded-md border bg-surface px-2 py-1.5 text-[14px] text-ink outline-none focus:border-navy" style={{ borderColor: err[k] ? 'var(--crit)' : 'var(--line)' }}>
+        <option value="">Choisir…</option>{opts.map(o => <option key={o}>{o}</option>)}
+      </select>
+      {err[k] && <span className="text-[12px] text-crit">{err[k]}</span>}
+    </label>
+  );
+  const perks = [['TrendingDown', 'Impact sur votre EBITDA, selon la part du surcoût refacturée à vos clients'],
+    ['Leaf', 'Économies de la conversion Flexy Green : B100, Bio-GNC ou électrique'], ['Route', "Gains de l'optimisation de tournées et de l'éco-conduite Katalii"],
+    ['BarChart3', 'TCO comparé par énergie et prix du carbone à partir duquel chaque énergie devient rentable'], ['FileText', 'Rapport de synthèse à partager ou imprimer']];
+  return (
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+      <Panel eyebrow="Version détaillée" title="Ce que vous obtenez">
+        <ul className="flex flex-col gap-3">
+          {perks.map(([ic, t]) => <li key={t} className="flex gap-3 text-[13px]"><span className="text-emink mt-0.5"><Icon name={ic} size={17} /></span>{t}</li>)}
+        </ul>
+        <button onClick={onBack} className="self-start inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink"><Icon name="ChevronLeft" size={14} />Revenir à la version allégée</button>
+      </Panel>
+      <form onSubmit={submit} noValidate className="rounded-xl border border-line bg-surface p-4 sm:p-5 flex flex-col gap-4" style={{ boxShadow: 'var(--shadow)' }}>
+        <div><div className="eyebrow">Accès gratuit</div><h3 className="font-display text-[17px] font-semibold">Vos coordonnées</h3></div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {field('prenom', 'Prénom', { autoComplete: 'given-name' })}
+          {field('nom', 'Nom', { autoComplete: 'family-name' })}
+          {field('societe', 'Société', { autoComplete: 'organization' })}
+          {field('fonction', 'Fonction', { autoComplete: 'organization-title', placeholder: 'ex. Responsable de parc' })}
+          {field('email', 'E-mail professionnel', { type: 'email', autoComplete: 'email' })}
+          {field('tel', 'Téléphone (facultatif)', { type: 'tel', autoComplete: 'tel' })}
+          {select('flotte', 'Taille de la flotte', FLEET_SIZES)}
+          {select('region', 'Région', REGIONS)}
+        </div>
+        <label className="flex items-start gap-2.5 text-[13px]">
+          <input id="g-consent" type="checkbox" className="mt-0.5" checked={f.consent} onChange={up('consent')} />
+          <span>J'accepte d'être recontacté par Groupe Berto au sujet de ma simulation.{err.consent && <span className="block text-[12px] text-crit">{err.consent}</span>}</span>
+        </label>
+        <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-4 py-2.5 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>
+          <Icon name="Unlock" size={15} />Accéder à la version détaillée</button>
+        <p className="text-[12px] text-muted">Version de démonstration : vos coordonnées ne sont ni transmises ni conservées.</p>
+      </form>
+    </div>
+  );
+}
+
+const UNLOCK_KEY = 'ets2-detail-unlocked';
+const readUnlocked = () => { try { return localStorage.getItem(UNLOCK_KEY) === '1'; } catch { return false; } };
+
+function App() {
+  const [st, set] = useState(defaultState);
+  const [report, setReport] = useState(false);
+  const [unlocked, setUnlocked] = useState(readUnlocked);
+  const [mode, setMode] = useState('light'); // light | gate | full
+  const r = useMemo(() => simulate(st), [st]);
+  const go = i => set(s => ({ ...s, step: Math.max(0, Math.min(3, i)) }));
+  const Step = [StepFleet, StepMarket, StepResults, StepLevers][st.step];
+  const toDetailed = () => { setMode(unlocked ? 'full' : 'gate'); scrollTo({ top: 0, behavior: 'smooth' }); };
+  const unlock = () => { try { localStorage.setItem(UNLOCK_KEY, '1'); } catch {} setUnlocked(true); setMode('full'); scrollTo({ top: 0 }); };
+  return (
+    <div className="mx-auto max-w-[1240px] px-4 sm:px-6 py-6 flex flex-col gap-5">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="eyebrow flex items-center gap-2"><i className="inline-block h-2 w-2 rounded-sm bg-emerald" />Groupe Berto · Katalii</span>
+          <h1 className="font-display text-[28px] sm:text-[34px] font-bold leading-[1.05]">Calculateur <Term k="ets2">EU ETS 2</Term> & TCO flotte</h1>
+          <p className="text-muted max-w-[62ch]">Mesurez ce que la taxe carbone européenne sur les carburants coûtera à votre flotte à partir de 2027, puis simulez les leviers pour la neutraliser.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Seg id="mode" value={mode === 'light' ? 'light' : 'full'} onChange={v => v === 'light' ? setMode('light') : toDetailed()}
+            options={[{ v: 'light', label: 'Version allégée' },
+              { v: 'full', label: <span className="inline-flex items-center gap-1.5">{!unlocked && <Icon name="Lock" size={13} />}Version détaillée</span> }]} />
+          <button onClick={() => set(s => ({ ...defaultState(), step: s.step }))} className="inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink">
+            <Icon name="RotateCcw" size={14} />Revenir à l'exemple</button>
+        </div>
+      </header>
+
+      {mode === 'light' && <LightCalc st={st} set={set} r={r} unlocked={unlocked} onDetailed={toDetailed} />}
+      {mode === 'gate' && <LeadGate onUnlock={unlock} onBack={() => setMode('light')} />}
+
+      {mode === 'full' && <>
+      <nav aria-label="Étapes" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {STEPS.map((s, i) => {
+          const on = st.step === i, done = i < st.step;
+          return (
+            <button key={s.t} onClick={() => go(i)} aria-current={on ? 'step' : undefined}
+              className="relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors"
+              style={{ borderColor: on ? 'var(--navy)' : 'var(--line)', background: on ? 'var(--surface)' : 'transparent' }}>
+              <span className="num grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-semibold"
+                style={{ background: on ? 'var(--navy)' : done ? 'var(--emerald-soft)' : 'var(--surface-2)', color: on ? 'var(--surface)' : done ? 'var(--emerald-ink)' : 'var(--muted)' }}>
+                {done ? <Icon name="Check" size={14} /> : i + 1}</span>
+              <span className="min-w-0"><span className="block font-semibold text-[13px] leading-tight">{s.t}</span><span className="block text-[12px] text-muted truncate">{s.d}</span></span>
+              {on && <motion.span layoutId="stepbar" className="absolute inset-x-3 -bottom-px h-0.5 rounded bg-navy" />}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <main className="min-w-0 flex flex-col gap-4">
+          <motion.div key={st.step} initial={{ opacity: .3, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .25 }}>
+            <Step st={st} set={set} r={r} />
+          </motion.div>
+          <div className="flex items-center justify-between gap-3">
+            <button onClick={() => go(st.step - 1)} disabled={st.step === 0}
+              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 py-2 text-[13px] font-semibold disabled:opacity-40"><Icon name="ChevronLeft" />Précédent</button>
+            {st.step < 3
+              ? <button onClick={() => go(st.step + 1)} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}>Suivant : {STEPS[st.step + 1].t}<Icon name="ChevronRight" /></button>
+              : <button onClick={() => setReport(true)} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-4 py-2 text-[13px] font-semibold" style={{ color: 'var(--surface)' }}><Icon name="FileText" />Voir le rapport</button>}
+          </div>
+        </main>
+        <Rail st={st} r={r} openReport={() => setReport(true)} />
+      </div>
+      </>}
+      <AnimatePresence>{report && <Report st={st} r={r} onClose={() => setReport(false)} />}</AnimatePresence>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
