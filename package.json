@@ -1,0 +1,8 @@
+{
+  "name": "calculateur-ets2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev/dev-server.mjs"
+  }
+}

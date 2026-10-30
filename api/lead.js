@@ -1,0 +1,45 @@
+// Reçoit la demande de rappel et la transmet à la liste Sarbacane (création ou mise à jour du contact).
+// Variables d'environnement Vercel :
+//   SARBACANE_ACCOUNT_ID, SARBACANE_API_KEY  identifiants de l'API Sarbacane Contacts
+//   SARBACANE_LIST_ID                        liste « ETS 2 – Calculette »
+//   SARBACANE_FIELDS                         JSON : nom de la donnée -> identifiant du champ Sarbacane,
+//                                            ex. {"prenom":"1","nom":"2","societe":"3","siret":"4","fonction":"5","km":"6","conso":"7","prix":"8","transition":"9","source":"10"}
+//   SARBACANE_API_URL (facultatif)           par défaut https://sarbacaneapis.com/v1
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const clean = (v, max = 200) => String(v ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const b = req.body && typeof req.body === 'object' ? req.body : {};
+
+  if (clean(b.website)) return res.status(200).json({ ok: true }); // champ piège : on fait semblant d'accepter
+
+  const d = {
+    prenom: clean(b.prenom), nom: clean(b.nom), societe: clean(b.societe), siret: clean(b.siret, 14).replace(/\s/g, ''),
+    fonction: clean(b.fonction), email: clean(b.email).toLowerCase(), tel: clean(b.tel, 30),
+    km: clean(b.sim?.km, 12), conso: clean(b.sim?.conso, 6), prix: clean(b.sim?.price, 4), transition: clean(b.sim?.share, 3),
+    source: clean(b.source) || 'direct',
+  };
+  if (!d.prenom || !d.nom || !d.societe || !d.fonction || !/^\d{14}$/.test(d.siret) || !EMAIL.test(d.email) || !/^[+\d][\d\s.-]{7,}$/.test(d.tel) || b.consent !== true)
+    return res.status(400).json({ error: 'invalid' });
+
+  const { SARBACANE_ACCOUNT_ID: account, SARBACANE_API_KEY: key, SARBACANE_LIST_ID: list } = process.env;
+  if (!account || !key || !list) { console.error('[lead] variables Sarbacane manquantes'); return res.status(503).json({ error: 'not_configured' }); }
+
+  let map = {};
+  try { map = JSON.parse(process.env.SARBACANE_FIELDS || '{}'); } catch { console.error('[lead] SARBACANE_FIELDS illisible'); }
+  const body = { email: d.email, phone: d.tel };
+  for (const [name, fieldId] of Object.entries(map)) if (d[name] !== undefined && d[name] !== '') body[fieldId] = d[name];
+
+  try {
+    const base = process.env.SARBACANE_API_URL || 'https://sarbacaneapis.com/v1';
+    const r = await fetch(`${base}/lists/${encodeURIComponent(list)}/contacts/upsert`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', accountId: account, apiKey: key }, body: JSON.stringify(body),
+    });
+    if (!r.ok) { console.error('[lead] Sarbacane a répondu', r.status, (await r.text()).slice(0, 300)); return res.status(502).json({ error: 'upstream' }); }
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error('[lead] échec de l\'appel Sarbacane', e.message);
+    return res.status(502).json({ error: 'upstream' });
+  }
+}
