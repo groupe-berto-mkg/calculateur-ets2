@@ -291,7 +291,7 @@ const utm = () => { try { const p = new URLSearchParams(location.search);
   return parts.join(' / ') || 'direct'; } catch { return 'direct'; } };
 
 function More({ sim }) {
-  const [f, setF] = useState({ prenom: '', nom: '', societe: '', siret: '', fonction: '', email: '', tel: '', consent: false, website: '' });
+  const [f, setF] = useState({ prenom: '', nom: '', societe: '', siret: '', fonction: '', email: '', tel: '', news: false, website: '' });
   const [err, setErr] = useState({});
   const [state, setState] = useState('idle'); // idle | sending | sent | failed
   const up = k => e => setF(s => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
@@ -302,7 +302,6 @@ function More({ sim }) {
     if (!/^\d{14}$/.test(f.siret.replace(/\s/g, ''))) x.siret = 'Le SIRET comporte 14 chiffres';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.trim())) x.email = 'Saisissez une adresse e-mail valide, par exemple nom@societe.fr';
     if (!/^[+\d][\d\s.-]{7,}$/.test(f.tel.trim())) x.tel = 'Saisissez un numéro pour que notre expert puisse vous rappeler';
-    if (!f.consent) x.consent = 'Cochez cette case pour envoyer votre demande';
     setErr(x);
     if (Object.keys(x).length) { document.getElementById(`g-${Object.keys(x)[0]}`)?.focus(); return; }
     setState('sending');
@@ -345,15 +344,18 @@ function More({ sim }) {
           <div className="sm:col-span-2">{field('email', 'E-mail professionnel', { type: 'email', autoComplete: 'email' })}</div>
         </div>
         <input value={f.website} onChange={up('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
-        <label className="flex items-start gap-2.5 text-[13px]">
-          <input id="g-consent" type="checkbox" className="mt-0.5" checked={f.consent} onChange={up('consent')} />
-          <span>J'accepte que Groupe Berto utilise mes coordonnées et les données de ma simulation pour me recontacter au sujet de l'EU ETS 2.
-            {err.consent && <span className="block text-[12px] text-crit">{err.consent}</span>}</span>
+        {/* Case facultative et décochée par défaut : un consentement valable ne peut pas être pré-coché. */}
+        <label className="flex items-start gap-2.5 rounded-lg bg-surface2 p-3 text-[13px]">
+          <input id="g-news" type="checkbox" className="mt-0.5" checked={f.news} onChange={up('news')} />
+          <span><b>Restez informé (facultatif).</b> Je souhaite recevoir les actualités de Groupe Berto sur l'EU ETS 2 et la transition énergétique des flottes,
+            et j'accepte que l'ouverture de ces e-mails soit mesurée. Je peux me désinscrire à tout moment.</span>
         </label>
         <button type="submit" disabled={state === 'sending'} className="rounded-md bg-emink px-4 py-3 text-[14px] font-semibold disabled:opacity-60" style={{ color: 'var(--surface)' }}>
           {state === 'sending' ? 'Envoi en cours…' : 'Être rappelé par un expert'}</button>
         {state === 'failed' && <p className="text-[13px] text-crit" role="alert">L'envoi n'a pas abouti. Merci de réessayer dans quelques instants.</p>}
-        <p className="text-[12px] text-muted">Vos données sont utilisées par Groupe Berto pour répondre à votre demande, conformément au RGPD. Vous pouvez demander leur accès ou leur suppression à tout moment.</p>
+        {/* Information RGPD (art. 13) : la demande de rappel ne repose pas sur le consentement. Texte à faire valider par le service juridique. */}
+        <p className="text-[12px] text-muted">En envoyant ce formulaire, vous demandez à être rappelé par un expert de Groupe Berto. Vos données et celles de votre simulation sont utilisées uniquement pour traiter cette demande
+          et sont conservées le temps nécessaire à votre accompagnement. Vous pouvez demander leur accès, leur rectification ou leur suppression à tout moment auprès de Groupe Berto.</p>
       </form>
     </div>
   );

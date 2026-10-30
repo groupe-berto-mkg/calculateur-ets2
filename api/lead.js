@@ -3,7 +3,8 @@
 //   SARBACANE_ACCOUNT_ID, SARBACANE_API_KEY  identifiants de l'API Sarbacane Contacts
 //   SARBACANE_LIST_ID                        liste « ETS 2 – Calculette »
 //   SARBACANE_FIELDS                         JSON : nom de la donnée -> identifiant du champ Sarbacane,
-//                                            ex. {"prenom":"1","nom":"2","societe":"3","siret":"4","fonction":"5","km":"6","conso":"7","prix":"8","transition":"9","source":"10"}
+//                                            ex. {"prenom":"1","nom":"2","societe":"3","siret":"4","fonction":"5","km":"6","conso":"7","prix":"8","transition":"9","source":"10","suivi":"11","suiviDate":"12"}
+//                                            « suivi » et « suiviDate » : colonnes de consentement (oui/non et date), renseignées si la case facultative est cochée
 //   SARBACANE_API_URL (facultatif)           par défaut https://sarbacaneapis.com/v1
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const clean = (v, max = 200) => String(v ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max);
@@ -20,8 +21,10 @@ export default async function handler(req, res) {
     km: clean(b.sim?.km, 12), conso: clean(b.sim?.conso, 6), prix: clean(b.sim?.price, 4), transition: clean(b.sim?.share, 3),
     source: clean(b.source) || 'direct',
   };
-  if (!d.prenom || !d.nom || !d.societe || !d.fonction || !/^\d{14}$/.test(d.siret) || !EMAIL.test(d.email) || !/^[+\d][\d\s.-]{7,}$/.test(d.tel) || b.consent !== true)
+  if (!d.prenom || !d.nom || !d.societe || !d.fonction || !/^\d{14}$/.test(d.siret) || !EMAIL.test(d.email) || !/^[+\d][\d\s.-]{7,}$/.test(d.tel))
     return res.status(400).json({ error: 'invalid' });
+  // Case facultative « actualités + mesure d'ouverture » : seuls les « oui » sont enregistrés, avec la date, côté serveur
+  if (b.news === true) { d.suivi = true; d.suiviDate = new Date().toISOString(); }
 
   const { SARBACANE_ACCOUNT_ID: account, SARBACANE_API_KEY: key, SARBACANE_LIST_ID: list } = process.env;
   if (!account || !key || !list) { console.error('[lead] variables Sarbacane manquantes'); return res.status(503).json({ error: 'not_configured' }); }

@@ -12,7 +12,7 @@ const types = { '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.js':
 Object.assign(process.env, {
   SARBACANE_ACCOUNT_ID: process.env.SARBACANE_ACCOUNT_ID || 'compte-test', SARBACANE_API_KEY: process.env.SARBACANE_API_KEY || 'cle-test',
   SARBACANE_LIST_ID: process.env.SARBACANE_LIST_ID || 'liste-test',
-  SARBACANE_FIELDS: process.env.SARBACANE_FIELDS || '{"prenom":"f1","nom":"f2","societe":"f3","siret":"f4","fonction":"f5","km":"f6","conso":"f7","prix":"f8","transition":"f9","source":"f10"}',
+  SARBACANE_FIELDS: process.env.SARBACANE_FIELDS || '{"prenom":"f1","nom":"f2","societe":"f3","siret":"f4","fonction":"f5","km":"f6","conso":"f7","prix":"f8","transition":"f9","source":"f10","suivi":"f11","suiviDate":"f12"}',
   SARBACANE_API_URL: process.env.SARBACANE_API_URL || `http://localhost:${port}/mock/v1`,
 });
 
