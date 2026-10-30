@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   const d = {
     prenom: clean(b.prenom), nom: clean(b.nom), societe: clean(b.societe), siret: clean(b.siret, 14).replace(/\s/g, ''),
     fonction: clean(b.fonction), email: clean(b.email).toLowerCase(), tel: clean(b.tel, 30),
-    km: num(b.sim?.km), conso: clean(b.sim?.conso, 6), prix: num(b.sim?.price), transition: clean(b.sim?.share, 3), // km et prix : colonnes de type numéro
+    km: num(b.sim?.km), conso: clean(b.sim?.conso, 6), prix: num(b.sim?.price), transition: clean(b.sim?.share, 3), // km et prix : colonnes de type numéro, valeurs validées avant l'envoi
     source: clean(b.source) || 'direct',
   };
   if (!d.prenom || !d.nom || !d.societe || !d.fonction || !/^\d{14}$/.test(d.siret) || !EMAIL.test(d.email) || !/^[+\d][\d\s.-]{7,}$/.test(d.tel))
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
   let map = {};
   try { map = JSON.parse(process.env.SARBACANE_FIELDS || '{}'); } catch { console.error('[lead] SARBACANE_FIELDS illisible'); }
   const body = { email: d.email, phone: intlPhone(d.tel) };
-  for (const [name, fieldId] of Object.entries(map)) if (d[name] !== undefined && d[name] !== '') body[fieldId] = d[name];
+  for (const [name, fieldId] of Object.entries(map)) if (d[name] !== undefined && d[name] !== '') body[fieldId] = String(d[name]); // Sarbacane refuse les nombres et les booléens JSON : tout part en texte
 
   try {
     const base = process.env.SARBACANE_API_URL || 'https://sarbacaneapis.com/v1';
