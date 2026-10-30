@@ -28,6 +28,21 @@ node dev/dev-server.mjs
 ```
 Ouvre http://localhost:3000. Une fausse API Sarbacane est simulée : les contacts s'affichent dans la console, rien n'est envoyé.
 
+## Intégration dans une page WordPress
+Dans la page, ajouter un bloc « HTML personnalisé » avec :
+```html
+<div id="ets2-calculateur"></div>
+<script src="https://calculateur-ets2.vercel.app/embed.js" defer></script>
+<noscript><p><a href="https://calculateur-ets2.vercel.app/">Ouvrir le calculateur EU ETS 2</a></p></noscript>
+```
+`embed.js` crée le cadre, ajuste sa hauteur au contenu (pas de barre de défilement interne), remonte en haut du calculateur
+au changement d'onglet et transmet à la calculette les paramètres UTM de la page et son adresse (champ « source » du contact Sarbacane).
+En mode intégré (`?embed=1`), l'en-tête et le titre sont masqués : le titre H1 et le texte sont ceux de la page WordPress, et le fond est transparent.
+
+Le cadre n'est autorisé que sur `groupe-berto.com` et `www.groupe-berto.com` (en-tête `frame-ancestors` dans `vercel.json`).
+Pour un autre domaine (préproduction, autre site), l'ajouter à cette liste.
+
+Test local : http://localhost:3000/embed-test (page hôte factice).
 ## Hypothèses
 Facteur d'émission du gazole : 2,68 kgCO2/L (règlement (UE) 2018/2066). Prix du quota : trois hypothèses de simulation.
 Projection sur 3 ans à prix et consommation constants. Gain d'éco-conduite : 15 à 20 %.
@@ -35,3 +50,4 @@ Projection sur 3 ans à prix et consommation constants. Gain d'éco-conduite : 1
 ## Déploiement
 Projet Vercel importé depuis ce dépôt, preset « Other », sans commande de build. Chaque push sur `main` redéploie.
 La page porte une balise `noindex` (à lever au lancement).
+

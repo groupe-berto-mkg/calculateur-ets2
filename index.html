@@ -22,6 +22,8 @@
   --lime:#4D7C0F;--lime-soft:#F2F7E9;--katalii:#023C4C;--katalii-soft:#EEF3F4;
 }
 html,body{background:var(--bg);color:var(--ink)}
+/* Mode intégré (iframe dans une page WordPress) : fond transparent, pour épouser celui de la page hôte */
+html.embed,html.embed body{background:transparent}
 body{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;margin:0}
 .font-display{letter-spacing:-.02em}
 .num{font-variant-numeric:tabular-nums}
@@ -32,6 +34,11 @@ input[type=checkbox]{accent-color:var(--emerald);width:16px;height:16px}
 :focus-visible{outline:2px solid var(--emerald);outline-offset:2px;border-radius:4px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script>
+// Mode intégré : ?embed=1 dans l'adresse, ou page affichée dans un cadre
+window.EMBED = (function () { try { return new URLSearchParams(location.search).get('embed') === '1' || window.self !== window.top; } catch (e) { return true; } })();
+if (window.EMBED) document.documentElement.classList.add('embed');
+</script>
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <script>
 tailwind.config={theme:{extend:{colors:{
@@ -277,8 +284,11 @@ async function submitLead(payload) {
   const res = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
   if (!res.ok) throw new Error(String(res.status));
 }
+// Origine du lead : paramètres UTM, plus la page hôte (paramètre « from » ajouté par embed.js)
 const utm = () => { try { const p = new URLSearchParams(location.search);
-  return ['utm_source', 'utm_medium', 'utm_campaign'].map(k => p.get(k)).filter(Boolean).join(' / ') || 'direct'; } catch { return 'direct'; } };
+  const parts = ['utm_source', 'utm_medium', 'utm_campaign'].map(k => p.get(k)).filter(Boolean);
+  if (p.get('from')) parts.push(`page ${p.get('from').slice(0, 80)}`);
+  return parts.join(' / ') || 'direct'; } catch { return 'direct'; } };
 
 function More({ sim }) {
   const [f, setF] = useState({ prenom: '', nom: '', societe: '', siret: '', fonction: '', email: '', tel: '', consent: false, website: '' });
@@ -355,10 +365,23 @@ function More({ sim }) {
 function App() {
   const [sim, setSim] = useState({ km: 500000, conso: 30, price: 60, share: 0 });
   const [tab, setTab] = useState('estimate');
-  const go = t => { setTab(t); scrollTo({ top: 0, behavior: 'smooth' }); };
+  const embed = window.EMBED;
+  // Intégré, le défilement est celui de la page hôte : on le lui demande (embed.js)
+  const go = t => { setTab(t); if (embed) parent.postMessage({ type: 'ets2:scroll' }, '*'); else scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  // Intégré, on transmet la hauteur du contenu à la page hôte pour que le cadre s'ajuste, sans barre de défilement interne
+  useEffect(() => {
+    if (!embed) return;
+    const root = document.getElementById('root');
+    const post = () => parent.postMessage({ type: 'ets2:height', height: Math.ceil(root.getBoundingClientRect().height) }, '*');
+    const ro = new ResizeObserver(post); ro.observe(root); post();
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="mx-auto max-w-[1100px] px-4 sm:px-6 py-6 flex flex-col gap-6">
+    <div className={`mx-auto max-w-[1100px] px-4 sm:px-6 flex flex-col gap-6 ${embed ? 'py-2' : 'py-6'}`}>
       <header className="flex flex-col gap-6">
+        {!embed && <>
         <div className="flex items-center justify-between gap-4">
           <img src="assets/logo-berto.png" alt="Groupe Berto" className="h-8 w-auto" />
           <span className="flex items-center gap-2 text-[12px] text-muted">Une offre<img src="assets/logo-flexy-green.png" alt="Flexy Green" className="h-12 w-auto rounded" /></span>
@@ -367,6 +390,7 @@ function App() {
           <h1 className="font-display text-[22px] sm:text-[30px] lg:text-[34px] font-semibold leading-[1.12]">Combien la taxe carbone EU ETS 2 coûtera-t-elle à votre flotte ?</h1>
           <p className="text-muted text-[15px]">Estimez le surcoût ou l'impact de cette taxe pour votre activité à partir du 1<sup>er</sup> janvier 2028.</p>
         </div>
+        </>}
         <div role="tablist" aria-label="Sections" className="flex gap-7 text-[14px] border-b border-line">
           {[['estimate', "Estimer l'impact"], ['more', 'Pour aller plus loin']].map(([v, l]) => {
             const on = tab === v;

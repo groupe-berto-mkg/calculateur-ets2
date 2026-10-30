@@ -31,6 +31,10 @@ http.createServer(async (req, res) => {
       req.body = JSON.parse((await readBody(req)) || '{}');
       return (await import(pathToFileURL(join(root, 'api', 'lead.js')))).default(req, res);
     }
+    if (url.pathname === '/embed-test') { // page hôte factice pour tester l'intégration
+      res.setHeader('Content-Type', types['.html']);
+      return res.end(await readFile(join(root, 'dev', 'embed-test.html')));
+    }
     const path = url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname);
     const file = join(root, normalize(path));
     if (!file.startsWith(root) || file.includes(`${join(root, 'api')}`) || file.includes(`${join(root, 'dev')}`)) return res.status(404).end();
