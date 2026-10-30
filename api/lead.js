@@ -3,11 +3,15 @@
 //   SARBACANE_ACCOUNT_ID, SARBACANE_API_KEY  identifiants de l'API Sarbacane Contacts
 //   SARBACANE_LIST_ID                        liste « ETS 2 – Calculette »
 //   SARBACANE_FIELDS                         JSON : nom de la donnée -> identifiant du champ Sarbacane,
-//                                            ex. {"prenom":"1","nom":"2","societe":"3","siret":"4","fonction":"5","km":"6","conso":"7","prix":"8","transition":"9","source":"10","suivi":"11","suiviDate":"12"}
-//                                            « suivi » et « suiviDate » : colonnes de consentement (oui/non et date), renseignées si la case facultative est cochée
+//                                            clés : prenom, nom, societe, siret, fonction, km, conso, prix, transition, source, suivi, suiviDate
+//                                            « suivi » et « suiviDate » : colonnes pixelOptin et pixelOptinAt, renseignées si la case facultative est cochée
 //   SARBACANE_API_URL (facultatif)           par défaut https://sarbacaneapis.com/v1
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const clean = (v, max = 200) => String(v ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max);
+
+const num = v => { const x = Number(v); return Number.isFinite(x) && x >= 0 ? x : undefined; };
+// Numéro au format international, tel qu'attendu par Sarbacane : 01 02 03 04 05 -> +33102030405
+const intlPhone = raw => { const p = raw.replace(/[\s.-]/g, ''); return /^0\d{9}$/.test(p) ? '+33' + p.slice(1) : /^00\d+$/.test(p) ? '+' + p.slice(2) : p; };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
@@ -18,7 +22,7 @@ export default async function handler(req, res) {
   const d = {
     prenom: clean(b.prenom), nom: clean(b.nom), societe: clean(b.societe), siret: clean(b.siret, 14).replace(/\s/g, ''),
     fonction: clean(b.fonction), email: clean(b.email).toLowerCase(), tel: clean(b.tel, 30),
-    km: clean(b.sim?.km, 12), conso: clean(b.sim?.conso, 6), prix: clean(b.sim?.price, 4), transition: clean(b.sim?.share, 3),
+    km: num(b.sim?.km), conso: clean(b.sim?.conso, 6), prix: num(b.sim?.price), transition: clean(b.sim?.share, 3), // km et prix : colonnes de type numéro
     source: clean(b.source) || 'direct',
   };
   if (!d.prenom || !d.nom || !d.societe || !d.fonction || !/^\d{14}$/.test(d.siret) || !EMAIL.test(d.email) || !/^[+\d][\d\s.-]{7,}$/.test(d.tel))
@@ -31,7 +35,7 @@ export default async function handler(req, res) {
 
   let map = {};
   try { map = JSON.parse(process.env.SARBACANE_FIELDS || '{}'); } catch { console.error('[lead] SARBACANE_FIELDS illisible'); }
-  const body = { email: d.email, phone: d.tel };
+  const body = { email: d.email, phone: intlPhone(d.tel) };
   for (const [name, fieldId] of Object.entries(map)) if (d[name] !== undefined && d[name] !== '') body[fieldId] = d[name];
 
   try {
